@@ -1,0 +1,1967 @@
+﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ORYNIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+
+
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;
+  --sidebar-bg:#0c0c14;
+  --input-bg:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.07);
+  --text:#eeeef5;
+  --muted:#6b6b80;
+  --accent:#22c55e;
+  --accent-blue:#3b82f6;
+  --hover:rgba(255,255,255,0.05);
+  --bubble:rgba(255,255,255,0.06);
+  --btn:rgba(255,255,255,0.08);
+  --glass-bg:rgba(255,255,255,0.03);
+  --glass-border:rgba(255,255,255,0.07);
+  --glass-shadow:0 8px 40px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.05);
+  --radius:12px;
+  --transition:0.2s cubic-bezier(0.4,0,0.2,1);
+  --green:#22c55e;
+  --green-dim:rgba(34,197,94,0.12);
+  --green-border:rgba(34,197,94,0.2);
+}
+/* Custom cursor */
+*{cursor:none!important}
+iframe{cursor:auto!important;}
+#cursor{position:fixed;width:10px;height:10px;background:#fff;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s,opacity .15s;mix-blend-mode:difference;}
+#cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(255,255,255,0.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .3s cubic-bezier(0.4,0,0.2,1),height .3s cubic-bezier(0.4,0,0.2,1),border-color .3s,transform .08s linear;}
+#cursor.clicking{width:6px;height:6px;}
+#cursor-ring.hovering{width:48px;height:48px;border-color:rgba(34,197,94,0.6);}
+/* Splash screen */
+#splash{position:fixed;inset:0;z-index:99990;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#splash-logo{font-size:48px;font-weight:800;letter-spacing:-2px;color:#fff;opacity:0;animation:splashFadeIn .2s 0s forwards;}
+#splash-sub{font-size:14px;color:rgba(255,255,255,0.35);letter-spacing:.15em;text-transform:uppercase;opacity:0;animation:splashFadeIn .2s .05s forwards;}
+#splash-bar{width:120px;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;opacity:0;animation:splashFadeIn .2s .08s forwards;}
+#splash-bar-fill{height:100%;width:0;background:linear-gradient(90deg,#0a84ff,#22c55e);border-radius:2px;animation:splashLoad .25s .1s cubic-bezier(0.4,0,0.2,1) forwards;}
+@keyframes splashFadeIn{to{opacity:1}}
+@keyframes splashLoad{to{width:100%}}
+#splash.hide{animation:splashOut .3s forwards;}
+@keyframes splashOut{to{opacity:0;transform:scale(1.02);pointer-events:none;}}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;opacity:0;animation:bodyIn .2s 0.38s forwards;}
+@keyframes bodyIn{to{opacity:1}}
+#sidebar{width:240px;background:rgba(8,8,16,0.97);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);display:flex;flex-direction:column;padding:10px 8px;gap:2px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.06);animation:slideInLeft .25s 0.4s cubic-bezier(0.4,0,0.2,1) both;}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;cursor:none;font-size:13px;font-weight:500;color:var(--muted);background:transparent;border:none;width:100%;text-align:left;transition:background var(--transition),color var(--transition);letter-spacing:-.01em;}
+.nav-btn:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+.nav-btn:active{transform:scale(0.97);}
+.active-nav{background:var(--green-dim)!important;color:var(--green)!important;border:1px solid var(--green-border)!important;}
+#chat-history{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin-top:8px}
+#chat-history::-webkit-scrollbar{width:3px}
+#chat-history::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px}
+.history-item{padding:8px 12px;border-radius:10px;font-size:13px;color:var(--muted);cursor:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background var(--transition),color var(--transition),transform var(--transition);}
+.history-item:hover,.history-item.active{background:rgba(255,255,255,0.05);color:var(--text);}
+.section-label{font-size:11px;color:var(--muted);padding:8px 12px 4px;text-transform:uppercase;letter-spacing:.08em;opacity:.5;}
+#sidebar-footer{border-top:1px solid var(--border);padding-top:8px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:none;transition:background var(--transition);}
+.sidebar-user:hover{background:var(--hover)}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0a84ff,#22c55e);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;}
+.sidebar-user span{font-size:13px}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;animation:fadeInUp .25s 0.4s cubic-bezier(0.4,0,0.2,1) both;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+#header{display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(8,8,16,0.8);position:sticky;top:0;z-index:10;}
+#model-selector{display:flex;align-items:center;gap:6px;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:600;cursor:none;padding:6px 10px;border-radius:9px;transition:background var(--transition);}
+#model-selector:hover{background:var(--hover);transform:scale(1.02);}
+.header-actions{display:flex;gap:8px}
+.icon-btn{background:transparent;border:none;color:var(--muted);cursor:none;padding:6px;border-radius:10px;display:flex;align-items:center;justify-content:center;transition:background var(--transition),color var(--transition),transform var(--transition);}
+.icon-btn:hover{background:var(--hover);color:var(--text);transform:scale(1.1);}
+.icon-btn:active{transform:scale(0.92);}
+#messages{flex:1;overflow-y:auto;padding:24px 0;display:flex;flex-direction:column;contain:strict;will-change:scroll-position;}
+#messages::-webkit-scrollbar{width:3px}
+#messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px;transition:background .2s}#messages::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.18)}
+#welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px 20px}
+#welcome h1{font-size:38px;font-weight:700;letter-spacing:-.6px;color:var(--text);text-align:center;line-height:1.18;animation:fadeInUp .3s 0.5s both;}
+#welcome p.sub{font-size:16px;color:var(--muted);text-align:center;margin-top:-16px;font-weight:400;animation:fadeInUp .3s 0.58s both;}
+.suggestions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:560px;width:100%;animation:fadeInUp .3s 0.65s both;}
+.suggestion-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);padding:14px 16px;cursor:none;font-size:13px;color:var(--muted);transition:all var(--transition);line-height:1.55;}
+.suggestion-card:hover{background:rgba(255,255,255,0.05);border-color:var(--green-border);color:var(--text);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.suggestion-card:active{transform:scale(0.97);}
+.suggestion-card strong{display:block;color:var(--text);margin-bottom:4px;font-size:13px;font-weight:600}
+.msg-row{padding:20px 0;display:flex;justify-content:center;animation:msgIn .35s cubic-bezier(0.4,0,0.2,1) both;}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.msg-inner{max-width:900px;width:100%;padding:0 40px;display:flex;gap:16px;align-items:flex-start}
+.msg-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
+.msg-avatar.user-av{background:linear-gradient(135deg,#5436da,#0a84ff);color:#fff}
+.msg-avatar.ai-av{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.12)}
+.msg-content{flex:1;font-size:16px;line-height:1.8}
+.msg-content.user-msg{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px 16px 4px 16px;padding:13px 18px;display:block;width:100%;}
+.msg-content pre{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:10px;padding:14px;overflow-x:auto;margin:10px 0;font-size:13px}
+.msg-content code{font-family:'SF Mono','Fira Code','Courier New',monospace;font-size:13px}
+.msg-content p:not(:last-child){margin-bottom:10px}
+.msg-content ul,.msg-content ol{padding-left:20px;margin:8px 0}
+.msg-content li{margin-bottom:4px}
+.typing-dots span{display:inline-block;width:6px;height:6px;background:var(--muted);border-radius:50%;margin:0 2px;animation:bounce .9s infinite}
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+.thinking-ring{width:28px;height:28px;position:relative;display:flex;align-items:center;justify-content:center}
+.thinking-ring svg{animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.thinking-label{font-size:13px;color:var(--muted);font-style:italic;animation:pulse-text 1.5s ease-in-out infinite}
+@keyframes pulse-text{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+/* Apple word-reveal animation - disabled for performance */
+.word-reveal{display:inline;}
+#input-area{padding:10px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:8px}
+#input-box{max-width:780px;width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:16px;display:flex;align-items:flex-end;padding:10px 14px;gap:8px;transition:border-color var(--transition),box-shadow var(--transition),background var(--transition);backdrop-filter:blur(16px);}
+#input-box:focus-within{border-color:rgba(34,197,94,0.35);background:rgba(255,255,255,0.05);box-shadow:0 0 0 3px rgba(34,197,94,0.07),0 8px 32px rgba(0,0,0,0.5);}
+#user-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px;resize:none;max-height:200px;line-height:1.5;font-family:inherit}
+#user-input::placeholder{color:var(--muted)}
+#send-btn{width:34px;height:34px;border-radius:9px;background:var(--green);border:none;cursor:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background var(--transition),transform var(--transition),box-shadow var(--transition);}
+#send-btn:not(:disabled):hover{background:#16a34a;transform:scale(1.06);box-shadow:0 4px 16px rgba(34,197,94,0.3);}
+#send-btn:not(:disabled):active{transform:scale(0.93);}
+#send-btn:disabled{background:rgba(255,255,255,0.08);opacity:.4;cursor:none}
+/* Voice button */
+#voice-btn{width:34px;height:34px;border-radius:10px;background:transparent;border:1px solid var(--glass-border);cursor:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:background var(--transition),color var(--transition),transform var(--transition),border-color var(--transition),box-shadow var(--transition);}
+#voice-btn:hover{background:rgba(255,255,255,0.08);color:var(--text);transform:scale(1.08);}
+#voice-btn.recording{background:rgba(255,59,48,0.15);border-color:rgba(255,59,48,0.5);color:#ff3b30;animation:voicePulse 1s ease-in-out infinite;}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,0.3)}50%{box-shadow:0 0 0 8px rgba(255,59,48,0)}}
+#disclaimer{font-size:12px;color:var(--muted);text-align:center;opacity:.5;}
+#status-bar{font-size:11px;color:var(--muted);padding:4px 16px;display:flex;align-items:center;gap:6px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#333}
+.status-dot.online{background:var(--green);box-shadow:0 0 6px rgba(34,197,94,0.4);}
+/* Apple glass util */
+.glass{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);box-shadow:0 4px 16px rgba(0,0,0,0.3);}
+/* Send button active pulse */
+@keyframes sendPop{0%{transform:scale(1)}50%{transform:scale(0.88)}100%{transform:scale(1)}}
+#send-btn:not(:disabled):active{animation:sendPop .18s cubic-bezier(0.4,0,0.2,1);}
+/* Welcome ambient glow */
+#welcome{position:relative;}
+#welcome::before{content:'';position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(34,197,94,0.04) 0%,transparent 70%);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-60%);z-index:0;}
+#welcome>*{position:relative;z-index:1;}
+/* Smooth modal transitions */
+#resources-modal,#automation-modal{animation:fadeInUp .28s cubic-bezier(0.4,0,0.2,1);}
+@media(max-width:640px){#sidebar{display:none}.suggestions{grid-template-columns:1fr}}
+.connector-card{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:10px;cursor:none;font-size:13px;color:var(--text);transition:background var(--transition),border-color var(--transition),transform var(--transition);}
+.connector-card:hover{background:rgba(255,255,255,0.08);border-color:rgba(10,132,255,0.4);transform:scale(1.02);}
+#globe-canvas{width:100%!important;height:100%!important;}
+/* Global persistent nav */
+#global-nav{position:fixed;left:0;top:0;bottom:0;width:52px;transition:none;background:rgba(10,10,12,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:2px;z-index:99980;}
+/* BI Dashboard */
+.bi-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;transition:border-color .2s,transform .2s,box-shadow .2s;}
+.bi-card:hover{border-color:rgba(34,197,94,0.2);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 0 1px rgba(34,197,94,0.04);}
+.bi-nav-btn{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:9px;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.4);font-size:11px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:all .18s;}
+.bi-nav-btn:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.8);}
+.bi-nav-active{background:rgba(34,197,94,0.1)!important;border-color:rgba(34,197,94,0.2)!important;color:#22c55e!important;}
+.umenu-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;color:rgba(255,255,255,0.6);cursor:none;transition:background .15s;}
+.umenu-item:hover{background:rgba(255,255,255,0.06);color:var(--text);}
+#global-nav button{width:38px;height:38px;border-radius:10px;background:transparent;border:none;color:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;cursor:none;transition:background .18s,color .18s,transform .18s;position:relative;}
+#global-nav button:hover{background:rgba(255,255,255,0.08);color:#f0f0f5;transform:scale(1.08);}
+#global-nav button.active-nav-btn{background:rgba(34,197,94,0.12);color:#22c55e;}
+#global-nav button[title]:hover::after{content:attr(title);position:absolute;left:46px;top:50%;transform:translateY(-50%);background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);color:#f0f0f5;font-size:11px;white-space:nowrap;padding:4px 8px;border-radius:6px;pointer-events:none;z-index:9999;}
+#sidebar{margin-left:0;}
+#resources-modal,#automation-modal,#finance-modal{left:52px!important;width:calc(100% - 52px)!important;}
+#main{margin-left:0;}
+#global-nav{display:none;}</style>
+</head>
+<body>
+<!-- CURSOR -->
+<!-- GLOBAL NAV -->
+<div id="global-nav">
+  <button title="New Chat" onclick="closeAllModals();newChat()" id="gnav-chat"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button title="Add Resources" onclick="closeAllModals();openResources()" id="gnav-res"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></button>
+  <button title="Automation" onclick="closeAllModals();openAutomation()" id="gnav-auto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></button>
+  <button title="Finance" onclick="closeAllModals();openFinance()" id="gnav-finance"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></button>
+</div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<!-- SPLASH -->
+<div id="splash">
+  <div id="splash-logo">ORYNIX</div>
+  <div id="splash-sub">AI Operating System</div>
+  <div id="splash-bar"><div id="splash-bar-fill"></div></div>
+</div>
+
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <!-- Workspace label -->
+  <div style="padding:14px 12px 6px;display:flex;align-items:center;gap:8px;">
+    <div style="width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#22c55e,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;">O</div>
+    <span style="font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.02em;">ORYNIX</span>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:6px 4px 8px;"></div>
+  <button id="new-chat-btn" onclick="newChat()" class="nav-btn active-nav">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    AI Assistant
+  </button>
+  <button id="automation-btn" onclick="openAutomation()" class="nav-btn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    Automation
+  </button>
+  <button id="finance-btn" onclick="openFinance()" class="nav-btn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Business Intelligence
+  </button>
+  <button id="resources-btn" onclick="openResources()" class="nav-btn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Resources
+  </button>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:8px 4px 6px;"></div><div class="section-label" style="font-size:10px;letter-spacing:.1em;opacity:.4;">Recent</div>
+  <div id="chat-history"></div>
+  <div id="sidebar-footer">
+    <div style="position:relative;">
+    <div class="sidebar-user" onclick="toggleUserMenu()" id="user-btn" style="cursor:none;">
+      <div class="avatar">Y</div>
+      <span>yashp</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;color:var(--muted);"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div id="user-menu" style="display:none;position:absolute;bottom:52px;left:0;right:0;background:rgba(12,12,12,0.97);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:6px;box-shadow:0 -8px 32px rgba(0,0,0,0.6);animation:fadeInUp .18s cubic-bezier(0.4,0,0.2,1);">
+      <div class="umenu-item" onclick="alert('Profile coming soon')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> Profile
+      </div>
+      <div class="umenu-item" onclick="alert('Billing coming soon')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> Billing
+      </div>
+      <div class="umenu-item" onclick="toggleHistoryPanel()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> History
+        <svg id="history-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;transition:transform .2s;"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div id="history-panel" style="display:none;padding:4px 6px 2px;">
+        <div id="umenu-history-list" style="max-height:140px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin-bottom:6px;scrollbar-width:none;"></div>
+        <div onclick="clearAllHistory()" style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;font-size:12px;color:#ff3b30;cursor:none;transition:background .15s;" onmouseover="this.style.background='rgba(255,59,48,0.1)'" onmouseout="this.style.background='transparent'">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> Clear All History
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+</aside>
+
+
+<!-- RESOURCES MODAL -->
+<div id="resources-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:#0a0a0a;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;animation:fadeInUp .3s cubic-bezier(0.4,0,0.2,1);">
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;">
+    <div style="font-size:16px;font-weight:700;color:#f0f0f5;">🛒 Add Resources</div>
+    <div id="res-status" style="font-size:12px;color:rgba(255,255,255,0.35);margin-left:4px;"></div>
+    <button onclick="closeResources()" style="margin-left:auto;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);cursor:none;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .18s,color .18s;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.5)'">✕</button>
+  </div>
+  <div style="flex:1;display:flex;overflow:hidden;">
+    
+    <!-- LEFT: Chat -->
+    <div style="width:360px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;">
+      <div id="res-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none;">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;">👋 Tell me what you need and how many. I'll find the best deals from Amazon, Flipkart, Meesho, Snapdeal & more.<br><br><span style="color:rgba(255,255,255,0.35);font-size:12px;">Example: "5 USB-C cables" or "2 office chairs under ₹5000"</span></div>
+      </div>
+      <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.07);">
+        <div style="display:flex;gap:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:8px 12px;transition:border-color .18s;" onfocusin="this.style.borderColor='rgba(10,132,255,0.4)'" onfocusout="this.style.borderColor='rgba(255,255,255,0.08)'">
+          <textarea id="res-input" rows="1" placeholder="What do you need and how many?" style="flex:1;background:transparent;border:none;outline:none;color:#f0f0f5;font-size:13px;resize:none;max-height:80px;line-height:1.5;font-family:inherit;" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();resSend()}"></textarea>
+          <button onclick="resSend()" style="width:30px;height:30px;border-radius:9px;background:#0a84ff;border:none;cursor:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .18s;" onmouseover="this.style.background='#1a8fff';this.style.transform='scale(1.08)'" onmouseout="this.style.background='#0a84ff';this.style.transform='scale(1)'">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- RIGHT: Deals + browsers -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div id="res-deals" style="display:none;flex-shrink:0;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.07);gap:10px;overflow-x:auto;scrollbar-width:none;"></div>
+      <div id="res-browsers" style="flex:1;display:flex;overflow:hidden;">
+        <div id="res-placeholder" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:rgba(255,255,255,0.2);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div style="font-size:13px;">Ask for a product to see deals here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+  <div id="header">
+    <button id="model-selector" onclick="toggleModelPicker()">
+      <span id="model-label">llama-3.3-70b-versatile</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="header-actions">
+      <button id="key-btn" class="icon-btn" onclick="toggleApiKeyModal()" title="API Key">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </button>
+      <button class="icon-btn" onclick="downloadChat()" title="Download chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" onclick="shareChat()" title="Share">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODEL PICKER DROPDOWN -->
+  <div id="model-picker" style="display:none;position:absolute;top:54px;left:16px;z-index:500;background:rgba(12,12,12,0.97);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:8px;min-width:280px;box-shadow:0 16px 48px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.06);animation:fadeInUp .2s cubic-bezier(0.4,0,0.2,1);">
+    <div style="font-size:11px;color:rgba(255,255,255,0.3);padding:4px 10px 8px;text-transform:uppercase;letter-spacing:.08em;">Select Model</div>
+    <div id="model-list"></div>
+    <div style="border-top:1px solid #3f3f3f;margin:6px 0;"></div>
+    <div style="padding:4px 10px 6px;font-size:11px;color:#8e8ea0;">Free tier: 14,400 req/day · <a href="https://console.groq.com" target="_blank" style="color:#0a84ff;text-decoration:none;">console.groq.com</a></div>
+  </div>div>
+  <div id="status-bar"><div class="status-dot" id="status-dot"></div><span id="status-text">Connecting to Groq…</span></div>
+  <div id="messages">
+    <div id="welcome">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:-8px;animation:fadeInUp .3s 0.45s both;">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;">O</div>
+        <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.04em;text-transform:uppercase;">ORYNIX</span>
+      </div>
+      <h1>Good evening, Yash.<br>What can I help you build?</h1>
+      <p class="sub">AI-powered automation, analytics, and operational intelligence for modern businesses.</p>
+      <div class="suggestions">
+        <div class="suggestion-card" onclick="fillInput('Automate my weekly sales report and send it to my team via email')"><strong>Automate reporting</strong>Build a workflow to generate and send weekly reports</div>
+        <div class="suggestion-card" onclick="fillInput('Analyze my operational costs and suggest where to cut expenses')"><strong>Cost optimization</strong>AI analysis of operational expenses and savings</div>
+        <div class="suggestion-card" onclick="fillInput('Create an automation that monitors API usage and alerts on spikes')"><strong>API monitoring</strong>Set up intelligent usage alerts and thresholds</div>
+        <div class="suggestion-card" onclick="fillInput('What workflows can I build to save the most time this month?')"><strong>Productivity boost</strong>Discover high-impact automation opportunities</div>
+      </div>
+    </div>
+  </div>
+  <div id="input-area">
+    <!-- Attached file preview -->
+    <div id="attach-preview" style="display:none;max-width:900px;width:100%;margin-bottom:6px;gap:8px;flex-wrap:wrap;"></div>
+    <div id="input-box">
+      <!-- Left buttons -->
+      <div style="display:flex;gap:2px;align-items:center;flex-shrink:0;">
+        <!-- Attach -->
+        <label title="Attach file" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:background .15s;" onmouseover="this.style.background='var(--btn)'" onmouseout="this.style.background='transparent'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.gif,.webp" style="display:none;" onchange="handleFiles(this.files)"/>
+        </label>
+        <!-- Connectors -->
+        <button title="Connectors" onclick="toggleConnectors()" style="width:32px;height:32px;border-radius:8px;background:transparent;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:background .15s;" onmouseover="this.style.background='var(--btn)'" onmouseout="this.style.background='transparent'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="6" height="6" rx="1"/><rect x="16" y="3" width="6" height="6" rx="1"/><rect x="9" y="15" width="6" height="6" rx="1"/><path d="M5 9v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><line x1="12" y1="14" x2="12" y2="15"/></svg>
+        </button>
+      </div>
+      <textarea id="user-input" rows="1" placeholder="Ask ORYNIX to automate, analyze, or build…" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button id="voice-btn" onclick="toggleVoice()" title="Voice input">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+      </button>
+      <button id="send-btn" onclick="isStreaming?stopMessage():sendMessage()" disabled>
+        <svg id="send-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        <svg id="stop-icon" width="16" height="16" viewBox="0 0 24 24" fill="white" style="display:none;"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+      </button>
+    </div>
+    <div id="disclaimer">ORYNIX · AI Operating System · Powered by Llama 3.3 70B</div>
+  </div>
+
+  <!-- CONNECTORS PANEL -->
+  <div id="connectors-panel" style="display:none;position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(12,12,12,0.97);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:20px;width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.06);animation:fadeInUp .22s cubic-bezier(0.4,0,0.2,1);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <span style="font-size:14px;font-weight:600;color:#f0f0f5;">Connectors</span>
+      <button onclick="toggleConnectors()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);cursor:none;font-size:14px;line-height:1;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .22s;">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="connector-card" onclick="connectTo('Google Drive')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 19h20L12 2z" fill="#4285f4" opacity=".7"/><path d="M2 19l5-8.5L12 19H2z" fill="#34a853" opacity=".7"/><path d="M22 19l-5-8.5L12 19h10z" fill="#fbbc04" opacity=".7"/></svg>
+        <span>Google Drive</span>
+      </div>
+      <div class="connector-card" onclick="connectTo('Notion')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4z" opacity=".15"/><text x="7" y="17" font-size="12" font-weight="bold" fill="#ececec">N</text></svg>
+        <span>Notion</span>
+      </div>
+      <div class="connector-card" onclick="connectTo('GitHub')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        <span>GitHub</span>
+      </div>
+      <div class="connector-card" onclick="connectTo('Slack')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="4" fill="#4a154b" opacity=".8"/><text x="6" y="16" font-size="11" font-weight="bold" fill="#fff">Sl</text></svg>
+        <span>Slack</span>
+      </div>
+      <div class="connector-card" onclick="connectTo('Jira')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#2684ff"><path d="M12 2L2 12l10 10 10-10L12 2zm0 3.5L19 12l-7 6.5L5 12l7-6.5z"/></svg>
+        <span>Jira</span>
+      </div>
+      <div class="connector-card" onclick="connectTo('Web Search')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Web Search</span>
+      </div>
+    </div>
+    <div id="connector-status" style="font-size:12px;color:#8e8ea0;text-align:center;margin-top:12px;min-height:16px;"></div>
+  </div>
+
+<!-- API KEY MODAL -->
+<div id="api-key-modal" style="display:none;position:fixed;top:60px;right:16px;z-index:600;background:rgba(12,12,12,0.97);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:20px;width:340px;box-shadow:0 16px 48px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.06);animation:fadeInUp .2s cubic-bezier(0.4,0,0.2,1);">
+  <div style="font-size:14px;font-weight:600;color:#f0f0f5;margin-bottom:4px;">Groq API Key</div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:14px;">Get a free key at <a href="https://console.groq.com" target="_blank" style="color:#0a84ff;text-decoration:none;">console.groq.com</a></div>
+  <input id="api-key-input" type="password" placeholder="gsk_…" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;color:#f0f0f5;font-size:13px;outline:none;font-family:inherit;margin-bottom:10px;transition:border-color .18s;" onfocus="this.style.borderColor='rgba(10,132,255,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter')saveApiKey()">
+  <div style="border-top:1px solid rgba(255,255,255,0.07);margin:12px 0 10px;"></div>
+  <div style="font-size:14px;font-weight:600;color:#f0f0f5;margin-bottom:4px;">Gemini API Key <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.35);">(fallback)</span></div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:10px;">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#0a84ff;text-decoration:none;">aistudio.google.com</a></div>
+  <input id="gemini-key-input" type="password" placeholder="AIza…" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;color:#f0f0f5;font-size:13px;outline:none;font-family:inherit;margin-bottom:10px;transition:border-color .18s;" onfocus="this.style.borderColor='rgba(10,132,255,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter')saveApiKey()">
+  <div style="display:flex;gap:8px;">
+    <button onclick="saveApiKey()" style="flex:1;padding:9px;border-radius:9px;background:#0a84ff;border:none;color:#fff;font-size:13px;font-weight:600;cursor:none;transition:background .18s,transform .18s;" onmouseover="this.style.background='#1a8fff';this.style.transform='scale(1.02)'" onmouseout="this.style.background='#0a84ff';this.style.transform='scale(1)'">Save Keys</button>
+    <button onclick="clearApiKey()" style="padding:9px 14px;border-radius:9px;background:rgba(255,59,48,0.1);border:1px solid rgba(255,59,48,0.25);color:#ff3b30;font-size:13px;cursor:none;transition:background .18s;" onmouseover="this.style.background='rgba(255,59,48,0.2)'" onmouseout="this.style.background='rgba(255,59,48,0.1)'">Clear</button>
+  </div>
+  <div id="api-key-status" style="font-size:12px;margin-top:10px;min-height:16px;text-align:center;"></div>
+</div>
+</main>
+
+
+<script>
+const GROQ_API_URL='https://api.groq.com/openai/v1/chat/completions';
+let GROQ_API_KEY=localStorage.getItem('groq_api_key')||'';
+let GEMINI_KEY=localStorage.getItem('gemini_api_key')||'';
+let MODEL='llama-3.3-70b-versatile';
+
+async function fetchGemini(msgs,tid){
+  if(!GEMINI_KEY)throw new Error('No Gemini API key set.');
+  // Build a single prompt from messages
+  const prompt=msgs.filter(m=>m.role!=='system').map(m=>(m.role==='user'?'User: ':'Assistant: ')+m.content).join('\n');
+  const sysMsg=msgs.find(m=>m.role==='system');
+  const fullPrompt=(sysMsg?sysMsg.content+'\n\n':'')+prompt;
+  const response=await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:fullPrompt}]}]})}
+  );
+  if(!response.ok)throw new Error('Gemini HTTP '+response.status);
+  const data=await response.json();
+  const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+  removeTyping(tid);
+  const el=appendMessage('assistant',''),ce=el.querySelector('.msg-content');
+  ce.innerHTML=renderMD(text);
+  scrollBot();
+  return text;
+}
+// ── FILE ATTACH ───────────────────────────────────────────────────────────────
+// ── MODEL PICKER ──────────────────────────────────────────────────────────────
+function loadModels(){const list=document.getElementById('model-list');list.innerHTML='<div style="padding:8px 10px;font-size:13px;color:#ececec;">llama-3.3-70b-versatile <span style="color:#10a37f;">✓</span></div>';}
+function selectModel(m){
+  document.querySelectorAll('[id^="check-"]').forEach(el=>el.style.display='none');
+  const chk=document.getElementById('check-'+m.replace(/[:.]/g,'_'));
+  if(chk)chk.style.display='block';
+  MODEL=m;
+  document.getElementById('model-label').textContent=m;
+  setStatus(true,`${m} · local`);
+  toggleModelPicker();
+}
+function toggleModelPicker(){
+  const p=document.getElementById('model-picker');
+  if(p.style.display==='none'){p.style.display='block';loadModels();}
+  else p.style.display='none';
+}
+
+document.addEventListener('click',e=>{
+  const p=document.getElementById('model-picker');
+  if(p&&p.style.display==='block'&&!p.contains(e.target)&&e.target.id!=='model-selector'&&!e.target.closest('#model-selector'))
+    p.style.display='none';
+});
+let attachedFiles=[]; // {name, type, content, base64}
+
+function handleFiles(files){
+  Array.from(files).forEach(f=>{
+    const entry={name:f.name,type:f.type,content:'',base64:''};
+    attachedFiles.push(entry);
+    addFileTag(f.name, f.type.startsWith('image/')?'🖼':'📄', '⏳ reading…');
+
+    if(f.type.startsWith('image/')){
+      // Image → base64 for vision
+      const reader=new FileReader();
+      reader.onload=e=>{
+        entry.base64=e.target.result.split(',')[1];
+        entry.content='[Image attached]';
+        updateFileTag(f.name,'✅');
+      };
+      reader.readAsDataURL(f);
+    } else if(f.type==='application/pdf'){
+      // PDF → extract text via PDF.js
+      const reader=new FileReader();
+      reader.onload=async e=>{
+        try{
+          const pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;
+          let text='';
+          for(let i=1;i<=Math.min(pdf.numPages,10);i++){
+            const page=await pdf.getPage(i);
+            const tc=await page.getTextContent();
+            text+=tc.items.map(s=>s.str).join(' ')+'\n';
+          }
+          entry.content=text.trim().slice(0,8000);
+          updateFileTag(f.name,'✅');
+        }catch(err){entry.content='[PDF read error]';updateFileTag(f.name,'⚠️');}
+      };
+      reader.readAsArrayBuffer(f);
+    } else {
+      // Plain text / doc
+      const reader=new FileReader();
+      reader.onload=e=>{entry.content=e.target.result.slice(0,8000);updateFileTag(f.name,'✅');};
+      reader.readAsText(f);
+    }
+  });
+  document.getElementById('file-input').value='';
+  sendBtn.disabled=false;
+}
+
+function addFileTag(name, icon, status){
+  const tag=document.createElement('div');
+  tag.id='ftag-'+name.replace(/\W/g,'_');
+  tag.style.cssText='display:inline-flex;align-items:center;gap:6px;background:#2f2f2f;border:1px solid #3f3f3f;border-radius:8px;padding:4px 10px;font-size:12px;color:#ececec;';
+  tag.innerHTML=`${icon} ${name.slice(0,24)} <span class="ftag-status">${status}</span> <span onclick="removeFile('${name}')" style="cursor:pointer;color:#8e8ea0;margin-left:2px;">✕</span>`;
+  const preview=document.getElementById('attach-preview');
+  preview.style.display='flex';
+  preview.appendChild(tag);
+}
+function updateFileTag(name, status){
+  const tag=document.getElementById('ftag-'+name.replace(/\W/g,'_'));
+  if(tag){const s=tag.querySelector('.ftag-status');if(s)s.textContent=status;}
+}
+function removeFile(name){
+  attachedFiles=attachedFiles.filter(f=>f.name!==name);
+  document.getElementById('ftag-'+name.replace(/\W/g,'_'))?.remove();
+  if(!attachedFiles.length)document.getElementById('attach-preview').style.display='none';
+}
+
+// Override sendMessage to inject file content
+let _pendingImages=[];
+
+// ── CONNECTORS ────────────────────────────────────────────────────────────────
+const connectedServices=new Set();
+function toggleConnectors(){
+  const p=document.getElementById('connectors-panel');
+  p.style.display=p.style.display==='none'?'block':'none';
+}
+function connectTo(name){
+  const st=document.getElementById('connector-status');
+  if(connectedServices.has(name)){
+    connectedServices.delete(name);
+    st.textContent=`${name} disconnected.`;
+    st.style.color='#8e8ea0';
+  }else{
+    connectedServices.add(name);
+    st.textContent=`✓ ${name} connected! Context will be included in your chats.`;
+    st.style.color='#10a37f';
+    // inject connector context into next system prompt
+  }
+}
+// Close connectors panel on outside click
+document.addEventListener('click',e=>{
+  const p=document.getElementById('connectors-panel');
+  if(p&&p.style.display==='block'&&!p.contains(e.target)&&!e.target.closest('[onclick="toggleConnectors()"]'))
+    p.style.display='none';
+});
+
+let messages=[],currentId=null,isStreaming=false;
+let _abortController=null;
+
+function stopMessage(){
+  if(_abortController){_abortController.abort();_abortController=null;}
+}
+
+function _setStreaming(on){
+  isStreaming=on;
+  sendBtn.disabled=!on&&!inputEl.value.trim();
+  document.getElementById('send-icon').style.display=on?'none':'block';
+  document.getElementById('stop-icon').style.display=on?'block':'none';
+  if(on) sendBtn.disabled=false; // always enabled when streaming so stop works
+}
+let sessions=JSON.parse(localStorage.getItem('orynix_sessions')||'[]');
+if(sessions.length) renderHistory();
+
+function persistSessions(){try{localStorage.setItem('orynix_sessions',JSON.stringify(sessions.slice(0,50)));}catch(e){}}
+function saveSession(msg){if(!currentId){currentId=Date.now();sessions.unshift({id:currentId,title:msg.slice(0,40)+(msg.length>40?'…':''),messages:[...messages]});renderHistory()}else{const s=sessions.find(s=>s.id===currentId);if(s)s.messages=[...messages]}persistSessions()}
+function renderHistory(){document.getElementById('chat-history').innerHTML=sessions.map(s=>'<div class="history-item '+(s.id===currentId?'active':'')+'" onclick="loadSession('+s.id+')">'+s.title+'</div>').join('')}
+function appendMessage(role,content){const c=document.getElementById('messages'),r=document.createElement('div');r.className='msg-row '+role;r.innerHTML=`<div class="msg-inner"><div class="msg-avatar ${role==='user'?'user-av':'ai-av'}">${role==='user'?'Y':'O'}</div><div class="msg-content ${role==='user'?'user-msg':''}">${role==='user'?esc(content):renderMD(content)}</div></div>`;c.appendChild(r);scrollBot();return r}
+function appendTyping(id){const c=document.getElementById('messages'),r=document.createElement('div');r.className='msg-row assistant';r.id=id;r.innerHTML=`<div class="msg-inner"><div class="thinking-ring"><svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="#3f3f3f" stroke-width="2.5"/><path d="M14 3 A11 11 0 0 1 25 14" stroke="#ececec" stroke-width="2.5" stroke-linecap="round"/></svg></div><div class="msg-content"><span class="thinking-label">Thinking…</span></div></div>`;c.appendChild(r);scrollBot()}
+function removeTyping(id){document.getElementById(id)?.remove()}
+function scrollBot(){const m=document.getElementById('messages');m.scrollTo({top:m.scrollHeight,behavior:'smooth'})}
+function renderMD(t){return t.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>`<pre><code>${esc(c.trim())}</code></pre>`).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>').replace(/^\s*[-*] (.+)$/gm,'<li>$1</li>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}
+let _renderedLen=0;
+function renderMDAnimated(t,el){const newText=t.slice(_renderedLen);if(!newText)return;_renderedLen=t.length;el.appendChild(document.createTextNode(newText))}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+async function fetchGroq(msgs,tid){if(!GROQ_API_KEY)throw new Error('No Groq API key. Click the key icon to add it.');const res=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},signal:_abortController?.signal,body:JSON.stringify({model:MODEL,messages:msgs,stream:true})});if(!res.ok)throw new Error('Groq HTTP '+res.status);removeTyping(tid);const el=appendMessage('assistant',''),ce=el.querySelector('.msg-content'),rd=res.body.getReader(),dc=new TextDecoder();let full='';_renderedLen=0;while(true){const{done,value}=await rd.read();if(done)break;for(const l of dc.decode(value).split('\n').filter(x=>x.startsWith('data:'))){const d=l.slice(5).trim();if(d==='[DONE]')break;try{const j=JSON.parse(d);full+=j.choices?.[0]?.delta?.content||'';renderMDAnimated(full,ce);scrollBot()}catch{}}}return full}function loadSession(id){const s=sessions.find(s=>s.id===id);if(!s)return;currentId=id;messages=[...s.messages];const c=document.getElementById('messages');c.innerHTML='';messages.forEach(m=>appendMessage(m.role,m.content));renderHistory()}
+function newChat(){setGlobalNav('gnav-chat');currentId=null;messages=[];const c=document.getElementById('messages');c.innerHTML='<div id="welcome"><div style="display:flex;align-items:center;gap:10px;margin-bottom:-8px;"><div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;">O</div><span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:.04em;text-transform:uppercase;">ORYNIX</span></div><h1>Good evening, Yash.<br>What can I help you build?</h1><p class="sub">AI-powered automation, analytics, and operational intelligence for modern businesses.</p><div class="suggestions"><div class="suggestion-card" onclick="fillInput(\'What are the top 5 trending business ideas in 2026?\')"><strong>Trending businesses</strong>Top 5 business ideas trending right now in 2026</div><div class="suggestion-card" onclick="fillInput(\'What AI-based business can I start with low investment?\')"><strong>AI business ideas</strong>Low-investment AI businesses to start today</div><div class="suggestion-card" onclick="fillInput(\'Which industries are growing fastest in 2026?\')"><strong>Market trends</strong>Fastest growing industries and sectors in 2026</div><div class="suggestion-card" onclick="fillInput(\'Give me a business plan for a SaaS product targeting small businesses\')"><strong>Business plan</strong>SaaS product plan for small businesses</div></div></div>';renderHistory()}
+
+// Build a short memory context from recent sessions for the system prompt
+function getMemoryContext(){
+  const recent=sessions.slice(0,5); // last 5 conversations
+  if(!recent.length)return'';
+  const summary=recent.map(s=>{
+    const last=s.messages.slice(-4); // last 2 exchanges per session
+    return `[${s.title}]: `+last.map(m=>(m.role==='user'?'User: ':'AI: ')+m.content.slice(0,120)).join(' | ');
+  }).join('\n');
+  return'\n\nMemory from past conversations:\n'+summary+'\n\nUse this context to give personalized, consistent advice.';
+}
+checkServer();
+
+
+async function checkServer(){if(!GROQ_API_KEY){setStatus(false,'Enter your Groq API key — click the key icon');return;}try{const r=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:'user',content:'hi'}],max_tokens:1}),signal:AbortSignal.timeout(5000)});r.ok||r.status===400?setStatus(true,MODEL+' · Groq'):setStatus(false,'Groq error '+r.status)}catch{setStatus(false,'Groq unreachable')}}
+function setStatus(on,t){document.getElementById('status-dot').className='status-dot'+(on?' online':'');document.getElementById('status-text').textContent=t}
+const inputEl=document.getElementById('user-input'),sendBtn=document.getElementById('send-btn');
+inputEl.addEventListener('input',()=>{sendBtn.disabled=!inputEl.value.trim()||isStreaming});
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,200)+'px'}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+function fillInput(t){inputEl.value=t;autoResize(inputEl);sendBtn.disabled=false;inputEl.focus()}
+async function sendMessage(){const text=inputEl.value.trim();if(!text||isStreaming)return;document.getElementById('welcome')?.remove();messages.push({role:'user',content:text});appendMessage('user',text);inputEl.value='';inputEl.style.height='auto';_setStreaming(true);_abortController=new AbortController();const tid='t'+Date.now();appendTyping(tid);try{const defaultSys=`You are ORYNIX, a business intelligence assistant specializing in trending business opportunities, market analysis, and entrepreneurial advice. Help users identify profitable business ideas, analyze market trends, and provide actionable strategies for 2026. Be direct, insightful, and focus on practical business opportunities.${getMemoryContext()}`;const sysMsg={role:'system',content:window._activeBotPrompt||defaultSys};const allMsgs=[sysMsg,...messages];let reply;try{reply=await fetchGroq(allMsgs,tid);}catch(groqErr){if(groqErr.name==='AbortError')throw groqErr;// Groq failed — try Gemini fallback
+setStatus(false,'Groq unavailable · Switching to Gemini…');reply=await fetchGemini(allMsgs,tid);setStatus(true,'Gemini 2.0 Flash · fallback');}if(reply){messages.push({role:'assistant',content:reply});saveSession(text)}}catch(e){if(e.name!=='AbortError'){removeTyping(tid);appendMessage('assistant','⚠️ '+e.message)}}_setStreaming(false);_abortController=null;sendBtn.disabled=!inputEl.value.trim();}
+function handleFiles(files){
+  Array.from(files).forEach(f=>{
+    const entry={name:f.name,type:f.type,content:'',base64:''};
+    attachedFiles.push(entry);
+    addFileTag(f.name, f.type.startsWith('image/')?'🖼':'📄', '⏳ reading…');
+
+    if(f.type.startsWith('image/')){
+      // Image → base64 for vision
+      const reader=new FileReader();
+      reader.onload=e=>{
+        entry.base64=e.target.result.split(',')[1];
+        entry.content='[Image attached]';
+        updateFileTag(f.name,'✅');
+      };
+      reader.readAsDataURL(f);
+    } else if(f.type==='application/pdf'){
+      // PDF → extract text via PDF.js
+      const reader=new FileReader();
+      reader.onload=async e=>{
+        try{
+          const pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;
+          let text='';
+          for(let i=1;i<=Math.min(pdf.numPages,10);i++){
+            const page=await pdf.getPage(i);
+            const tc=await page.getTextContent();
+            text+=tc.items.map(s=>s.str).join(' ')+'\n';
+          }
+          entry.content=text.trim().slice(0,8000);
+          updateFileTag(f.name,'✅');
+        }catch(err){entry.content='[PDF read error]';updateFileTag(f.name,'⚠️');}
+      };
+      reader.readAsArrayBuffer(f);
+    } else {
+      // Plain text / doc
+      const reader=new FileReader();
+      reader.onload=e=>{entry.content=e.target.result.slice(0,8000);updateFileTag(f.name,'✅');};
+      reader.readAsText(f);
+    }
+  });
+  document.getElementById('file-input').value='';
+  sendBtn.disabled=false;
+}
+
+function addFileTag(name, icon, status){
+  const tag=document.createElement('div');
+  tag.id='ftag-'+name.replace(/\W/g,'_');
+  tag.style.cssText='display:inline-flex;align-items:center;gap:6px;background:#2f2f2f;border:1px solid #3f3f3f;border-radius:8px;padding:4px 10px;font-size:12px;color:#ececec;';
+  tag.innerHTML=`${icon} ${name.slice(0,24)} <span class="ftag-status">${status}</span> <span onclick="removeFile('${name}')" style="cursor:pointer;color:#8e8ea0;margin-left:2px;">✕</span>`;
+  const preview=document.getElementById('attach-preview');
+  preview.style.display='flex';
+  preview.appendChild(tag);
+}
+function updateFileTag(name, status){
+  const tag=document.getElementById('ftag-'+name.replace(/\W/g,'_'));
+  if(tag){const s=tag.querySelector('.ftag-status');if(s)s.textContent=status;}
+}
+function removeFile(name){
+  attachedFiles=attachedFiles.filter(f=>f.name!==name);
+  document.getElementById('ftag-'+name.replace(/\W/g,'_'))?.remove();
+  if(!attachedFiles.length)document.getElementById('attach-preview').style.display='none';
+}
+
+// Override sendMessage to inject file content
+
+// ── FILE ATTACH OVERRIDES ──
+const _origSend2=sendMessage;
+sendMessage=async function(){
+  if(attachedFiles.length){
+    const cur=inputEl.value.trim();
+    let fileCtx='';
+    attachedFiles.filter(f=>f.content).forEach(f=>{fileCtx+='\n\n--- File: '+f.name+' ---\n'+f.content;});
+    if(fileCtx)inputEl.value=(cur||'Please analyse the attached file(s).')+fileCtx;
+    attachedFiles=[];
+    const preview=document.getElementById('attach-preview');
+    preview.style.display='none';preview.innerHTML='';
+  }
+  await _origSend2();
+};
+
+
+
+// ── BUSINESS INTELLIGENCE DASHBOARD ─────────────────────────────────────────
+
+const BI_INSIGHTS = [
+  {icon:'💡', text:'Automation workflows saved <strong>36 working hours</strong> this month.', color:'#22c55e'},
+  {icon:'⚠️', text:'Operational costs increased <strong>12%</strong> — review infrastructure spend.', color:'#ff9f0a'},
+  {icon:'🚀', text:'Email automation has the <strong>highest efficiency score</strong> at 97.4%.', color:'#0a84ff'},
+  {icon:'📊', text:'API usage is <strong>31% above average</strong> — consider tier upgrade.', color:'#22c55e'},
+  {icon:'🎯', text:'Revenue growth on track for <strong>Q4 target of $61K</strong>.', color:'#22c55e'},
+];
+
+function openFinance(){
+  document.getElementById('global-nav').style.display='flex';
+  document.getElementById('sidebar').style.marginLeft='52px';
+  setGlobalNav('gnav-finance');
+  document.getElementById('finance-modal').style.display='flex';
+  document.getElementById('main').style.display='none';
+  setTimeout(biInit, 80);
+}
+function closeFinance(){
+  document.getElementById('finance-modal').style.display='none';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('global-nav').style.display='none';
+  document.getElementById('sidebar').style.marginLeft='0';
+}
+
+function biTab(tab) {
+  ['dashboard','revenue','automation','productivity'].forEach(t => {
+    const p = document.getElementById('bipanel-'+t);
+    const nb = document.getElementById('binav-'+t);
+    const tb = document.getElementById('bi-tab-'+t);
+    if(p) p.style.display = 'none';
+    if(nb) { nb.classList.remove('bi-nav-active'); }
+    if(tb) { tb.style.background='transparent'; tb.style.borderColor='transparent'; tb.style.color='rgba(255,255,255,0.4)'; }
+  });
+  const panel = document.getElementById('bipanel-'+tab);
+  if(panel) panel.style.display = 'flex';
+  const nb = document.getElementById('binav-'+tab);
+  if(nb) nb.classList.add('bi-nav-active');
+  const tb = document.getElementById('bi-tab-'+tab);
+  if(tb) { tb.style.background='rgba(34,197,94,0.15)'; tb.style.borderColor='rgba(34,197,94,0.25)'; tb.style.color='#22c55e'; }
+  // Draw charts for the active panel
+  if(tab==='dashboard') { biDrawSparklines(); biDrawDashboardCharts(); }
+  if(tab==='revenue') setTimeout(biDrawRevenueDetail, 50);
+  if(tab==='automation') setTimeout(biDrawAutoDetail, 50);
+  if(tab==='productivity') setTimeout(biDrawProdDetail, 50);
+}
+
+function biRefresh() {
+  biInit();
+}
+
+function biInit() {
+  biRenderInsights();
+  biDrawSparklines();
+  biDrawDashboardCharts();
+}
+
+function biRenderInsights() {
+  const el = document.getElementById('bi-insights-list');
+  if(!el) return;
+  el.innerHTML = BI_INSIGHTS.map(i =>
+    `<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.05);">
+      <span style="font-size:14px;flex-shrink:0;">${i.icon}</span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.5;">${i.text}</span>
+    </div>`
+  ).join('');
+}
+
+// ── CHART HELPERS ─────────────────────────────────────────────────────────────
+function biSparkline(canvasId, data, color) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 200;
+  canvas.width = W;
+  const H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const pts = data.map((v,i) => [i/(data.length-1)*W, H - ((v-min)/range)*(H-4)-2]);
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 6;
+  ctx.stroke();
+  // Fill
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  ctx.fillStyle = color.replace(')', ',0.08)').replace('rgb','rgba');
+  ctx.fill();
+}
+
+function biLineChart(canvasId, datasets, labels) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 400;
+  canvas.width = W;
+  const H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const allVals = datasets.flatMap(d=>d.data);
+  const min = 0, max = Math.max(...allVals)*1.15 || 1;
+  const padL=32, padB=20, padR=8, padT=8;
+  const cW=W-padL-padR, cH=H-padB-padT;
+  // Grid lines
+  [0.25,0.5,0.75,1].forEach(f => {
+    const y = padT + cH*(1-f);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y);
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='9px sans-serif';
+    ctx.fillText(Math.round(max*f/1000)+'k', 2, y+3);
+  });
+  // X labels
+  labels.forEach((l,i) => {
+    const x = padL + (i/(labels.length-1))*cW;
+    ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(l, x, H-4);
+  });
+  // Lines
+  datasets.forEach(ds => {
+    const pts = ds.data.map((v,i)=>[padL+(i/(ds.data.length-1))*cW, padT+cH*(1-(v-min)/(max-min))]);
+    ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+    pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+    ctx.strokeStyle=ds.color; ctx.lineWidth=2;
+    ctx.shadowColor=ds.color; ctx.shadowBlur=8; ctx.stroke(); ctx.shadowBlur=0;
+    // Dots
+    pts.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],3,0,Math.PI*2);ctx.fillStyle=ds.color;ctx.fill();});
+  });
+}
+
+function biBarChart(canvasId, data, color, labels) {
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 400;
+  canvas.width = W;
+  const H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const max = Math.max(...data)*1.15||1;
+  const padL=28, padB=20, padR=8, padT=8;
+  const cW=W-padL-padR, cH=H-padB-padT;
+  const bW = cW/data.length*0.6, gap = cW/data.length;
+  data.forEach((v,i)=>{
+    const x=padL+i*gap+(gap-bW)/2, bH=(v/max)*cH, y=padT+cH-bH;
+    const grad=ctx.createLinearGradient(0,y,0,y+bH);
+    grad.addColorStop(0,color); grad.addColorStop(1,color.replace(')',',0.2)').replace('rgb','rgba'));
+    ctx.fillStyle=grad;
+    ctx.shadowColor=color; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.roundRect(x,y,bW,bH,3); ctx.fill(); ctx.shadowBlur=0;
+    if(labels){ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText(labels[i],x+bW/2,H-4);}
+  });
+}
+
+function biDrawSparklines() {
+  biSparkline('bi-sparkline-revenue',[32000,35000,38000,41000,39000,44000,48200],'#22c55e');
+  biSparkline('bi-sparkline-expense',[9000,10200,11000,10500,11800,12100,12840],'#ff9f0a');
+  biSparkline('bi-sparkline-ai',[14000,16000,18500,20000,21000,23000,24391],'#0a84ff');
+  biSparkline('bi-sparkline-hours',[18,22,28,24,30,33,36],'#22c55e');
+}
+
+function biDrawDashboardCharts() {
+  biLineChart('bi-chart-revenue',
+    [{data:[32000,35000,38000,41000,39000,44000,48200],color:'#22c55e'},
+     {data:[9000,10200,11000,10500,11800,12100,12840],color:'#ff9f0a'}],
+    ['Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
+  biBarChart('bi-chart-workflow',[120,145,98,167,189,143,201,178,156,190,210,188,220,235],'#0a84ff',null);
+}
+
+function biDrawRevenueDetail() {
+  biLineChart('bi-chart-rev-detail',
+    [{data:[32000,35000,38000,41000,39000,44000,48200],color:'#22c55e'},
+     {data:[9000,10200,11000,10500,11800,12100,12840],color:'#ff9f0a'}],
+    ['Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
+}
+
+function biDrawAutoDetail() {
+  biBarChart('bi-chart-auto-detail',
+    [120,145,98,167,189,143,201,178,156,190,210,188,220,235],'#0a84ff',
+    ['1','2','3','4','5','6','7','8','9','10','11','12','13','14']);
+}
+
+function biDrawProdDetail() {
+  biBarChart('bi-chart-prod-detail',[18,22,28,24,30,33,36,38],'#22c55e',
+    ['W1','W2','W3','W4','W5','W6','W7','W8']);
+}
+
+// ── RESOURCES ─────────────────────────────────────────────────────────────────
+function openResources(){
+  document.getElementById('global-nav').style.display='flex';document.getElementById('sidebar').style.marginLeft='52px';
+  setGlobalNav('gnav-res');
+  document.getElementById('resources-modal').style.display='flex';
+  document.getElementById('main').style.display='none';
+}
+function closeResources(){
+  // Stop all iframes from loading in background
+  document.querySelectorAll('#res-browsers iframe').forEach(f=>f.src='about:blank');
+  document.getElementById('resources-modal').style.display='none';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('global-nav').style.display='none';
+  document.getElementById('sidebar').style.marginLeft='0';
+}
+
+let resStreaming=false;
+
+function resAppend(role,html){
+  const el=document.getElementById('res-messages');
+  const div=document.createElement('div');
+  const isUser=role==='user';
+  div.style.cssText=isUser
+    ?'align-self:flex-end;background:rgba(10,132,255,0.12);border:1px solid rgba(10,132,255,0.2);border-radius:12px 12px 3px 12px;padding:9px 13px;font-size:13px;color:#f0f0f5;line-height:1.6;max-width:90%;'
+    :'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px 12px 12px 3px;padding:9px 13px;font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;';
+  if(isUser)div.textContent=html;else div.innerHTML=html;
+  el.appendChild(div);el.scrollTop=9999;
+  return div;
+}
+
+const MARKETPLACES=[
+  {name:'Amazon',  color:'#ff9900', search:'https://www.amazon.in/s?k='},
+  {name:'Flipkart',color:'#2874f0', search:'https://www.flipkart.com/search?q='},
+  {name:'Meesho',  color:'#f43397', search:'https://www.meesho.com/search?q='},
+  {name:'Snapdeal',color:'#e40000', search:'https://www.snapdeal.com/search?keyword='},
+  {name:'Myntra',  color:'#ff3f6c', search:'https://www.myntra.com/'},
+];
+
+async function resSend(){
+  const inp=document.getElementById('res-input');
+  const text=inp.value.trim();
+  if(!text||resStreaming)return;
+  inp.value='';inp.style.height='auto';
+  resAppend('user',text);
+  resStreaming=true;
+  document.getElementById('res-status').textContent='Analysing…';
+
+  const aiEl=resAppend('ai','<span style="opacity:.4">●●●</span>');
+
+  const prompt=`You are a smart shopping assistant. The user wants: "${text}"
+
+First, write 2-3 sentences discussing the product, what to look for, and typical price range in India.
+
+Then provide marketplace prices in this EXACT format:
+PRODUCT: <clean search query>
+AMAZON: ₹<price> | <one line reason>
+FLIPKART: ₹<price> | <one line reason>
+MEESHO: ₹<price> | <one line reason>
+SNAPDEAL: ₹<price> | <one line reason>
+MYNTRA: ₹<price> | <one line reason>
+BEST1: <marketplace name>
+BEST2: <marketplace name>
+SUMMARY: <one sentence recommendation>`;
+
+  try{
+    if(!GROQ_API_KEY)throw new Error('No Groq API key');
+    const res=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},body:JSON.stringify({model:MODEL,messages:[{role:'user',content:prompt}],stream:true})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const rd=res.body.getReader(),dc=new TextDecoder();
+    let full='';aiEl.innerHTML='';
+    while(true){
+      const{done,value}=await rd.read();if(done)break;
+      dc.decode(value).split('\n').filter(x=>x.startsWith('data:')).forEach(l=>{
+        const d=l.slice(5).trim();if(d==='[DONE]')return;
+        try{const j=JSON.parse(d);full+=j.choices?.[0]?.delta?.content||'';
+          // Show discussion text (before PRODUCT: line) as it streams
+          const discussionPart=full.split('PRODUCT:')[0].trim();
+          aiEl.innerHTML=discussionPart.replace(/\n/g,'<br>')||'<span style="opacity:.4">●●●</span>';
+          document.getElementById('res-messages').scrollTo({top:9999,behavior:'smooth'});
+        }catch{}
+      });
+    }
+    parseAndRenderDeals(full,text);
+  }catch(e){
+    aiEl.textContent='⚠️ '+e.message;
+  }
+  resStreaming=false;
+  document.getElementById('res-status').textContent='';
+}
+
+
+function parseAndRenderDeals(text,query){
+  const lines=text.split('\n');
+  const get=(key)=>{const l=lines.find(l=>l.startsWith(key+':'));return l?l.slice(key.length+1).trim():null;};
+  const productQuery=get('PRODUCT')||query;
+  const best1=(get('BEST1')||'Amazon').trim();
+  const best2=(get('BEST2')||'Flipkart').trim();
+
+  const stores=[
+    {name:'Amazon',  color:'#ff9900', search:'https://www.amazon.in/s?k='},
+    {name:'Flipkart',color:'#2874f0', search:'https://www.flipkart.com/search?q='},
+    {name:'Meesho',  color:'#f43397', search:'https://www.meesho.com/search?q='},
+    {name:'Snapdeal',color:'#e40000', search:'https://www.snapdeal.com/search?keyword='},
+    {name:'Myntra',  color:'#ff3f6c', search:'https://www.myntra.com/'},
+  ];
+
+  const deals=stores.map(m=>{
+    const val=get(m.name.toUpperCase());
+    const [price,reason]=(val||'').split('|').map(s=>s.trim());
+    return{...m,price:price||'—',reason:reason||'',isBest:m.name===best1||m.name===best2};
+  });
+
+  // Render deal cards
+  const dealsEl=document.getElementById('res-deals');
+  dealsEl.style.display='flex';
+  dealsEl.innerHTML=deals.map(d=>`
+    <div style="flex-shrink:0;width:160px;background:rgba(255,255,255,0.04);border:1px solid ${d.isBest?d.color+'66':'rgba(255,255,255,0.08)'};border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;${d.isBest?'box-shadow:0 0 12px '+d.color+'22;':''}">
+      <div style="font-size:12px;font-weight:700;color:${d.color};">${d.name}${d.isBest?' ⭐':''}</div>
+      <div style="font-size:16px;font-weight:700;color:#f0f0f5;">${d.price}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4;flex:1;">${d.reason}</div>
+      <a href="${d.search}${encodeURIComponent(productQuery)}" target="_blank" style="display:block;text-align:center;padding:7px 0;border-radius:8px;background:${d.color};color:#fff;font-size:12px;font-weight:600;text-decoration:none;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">Shop Now →</a>
+    </div>`).join('');
+
+  // Build best pick summary + bar chart
+  document.getElementById('res-placeholder').style.display='none';
+  const browsersEl=document.getElementById('res-browsers');
+
+  // Parse numeric prices
+  const priced=deals.map(d=>({...d,num:parseInt((d.price||'0').replace(/[^\d]/g,''))||0})).filter(d=>d.num>0);
+  const cheapest=priced.length?priced.reduce((a,b)=>a.num<b.num?a:b):null;
+  const priciest=priced.length?priced.reduce((a,b)=>a.num>b.num?a:b):null;
+  const savings=cheapest&&priciest&&priciest.num>cheapest.num?'₹'+(priciest.num-cheapest.num).toLocaleString('en-IN'):null;
+  const fastDel=deals.find(d=>d.name==='Flipkart')||deals.find(d=>d.name==='Amazon')||deals[0];
+  const maxPrice=priced.length?Math.max(...priced.map(d=>d.num)):1;
+
+  browsersEl.innerHTML=`<div style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;scrollbar-width:none;">
+
+    <!-- Best Pick Card -->
+    <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:13px;font-weight:700;color:#22c55e;margin-bottom:12px;">🏆 Best Pick Summary</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${cheapest?`<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">🏆</span><div><div style="font-size:12px;color:rgba(255,255,255,0.4);">Best Value</div><div style="font-size:14px;font-weight:600;color:#f0f0f5;">${cheapest.name} — ${cheapest.price}</div></div></div>`:''}
+        <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">⚡</span><div><div style="font-size:12px;color:rgba(255,255,255,0.4);">Fastest Delivery</div><div style="font-size:14px;font-weight:600;color:#f0f0f5;">${fastDel?fastDel.name:'Flipkart / Amazon'}</div></div></div>
+        ${savings?`<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">💰</span><div><div style="font-size:12px;color:rgba(255,255,255,0.4);">You Save vs Most Expensive</div><div style="font-size:14px;font-weight:600;color:#22c55e;">${savings} by choosing ${cheapest.name}</div></div></div>`:''}
+      </div>
+    </div>
+
+    <!-- Price Bar Chart -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:13px;font-weight:700;color:#f0f0f5;margin-bottom:14px;">📊 Price Comparison</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${deals.filter(d=>parseInt((d.price||'0').replace(/[^\d]/g,''))).map(d=>{
+          const n=parseInt(d.price.replace(/[^\d]/g,''));
+          const pct=maxPrice>0?Math.round((n/maxPrice)*100):0;
+          return `<div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:${d.color};font-weight:600;">${d.name}</span>
+              <span style="font-size:12px;color:#f0f0f5;font-weight:600;">${d.price}</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;">
+              <div style="height:8px;width:${pct}%;background:${d.color};border-radius:4px;transition:width .6s cubic-bezier(0.4,0,0.2,1);"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+  </div>`;
+
+  const summary=get('SUMMARY');
+  if(summary) resAppend('ai','✅ '+summary);
+}
+
+
+// ── USER MENU ─────────────────────────────────────────────────────────────────
+function toggleUserMenu(){
+  const m=document.getElementById('user-menu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+function toggleHistoryPanel(){
+  const p=document.getElementById('history-panel');
+  const ch=document.getElementById('history-chevron');
+  const open=p.style.display==='none';
+  p.style.display=open?'block':'none';
+  ch.style.transform=open?'rotate(180deg)':'rotate(0deg)';
+  if(open){
+    const list=document.getElementById('umenu-history-list');
+    list.innerHTML=sessions.length
+      ?sessions.map(s=>`<div style="padding:5px 8px;border-radius:6px;font-size:11px;color:rgba(255,255,255,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:none;transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,0.07)'" onmouseout="this.style.background='transparent'" onclick="loadSession(${s.id});toggleUserMenu()">${s.title}</div>`).join('')
+      :'<div style="font-size:11px;color:rgba(255,255,255,0.25);padding:4px 8px;">No history yet</div>';
+  }
+}
+function clearAllHistory(){
+  sessions=[];localStorage.removeItem('orynix_sessions');
+  renderHistory();
+  document.getElementById('umenu-history-list').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,0.25);padding:4px 8px;">No history yet</div>';
+}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('user-menu');
+  if(m&&m.style.display==='block'&&!e.target.closest('#user-btn')&&!e.target.closest('#user-menu'))
+    m.style.display='none';
+});// ── GLOBAL NAV ────────────────────────────────────────────────────────────────
+function closeAllModals(){
+  document.getElementById('resources-modal').style.display='none';
+  document.getElementById('automation-modal').style.display='none';
+  document.getElementById('finance-modal').style.display='none';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('global-nav').style.display='none';
+  document.getElementById('sidebar').style.marginLeft='0';
+}
+function setGlobalNav(id){document.getElementById('global-nav').style.display='flex';document.getElementById('sidebar').style.marginLeft='52px';
+  ['gnav-chat','gnav-res','gnav-auto','gnav-finance'].forEach(b=>{
+    document.getElementById(b)?.classList.remove('active-nav-btn');
+  });
+  document.getElementById(id)?.classList.add('active-nav-btn');
+}
+// ── AUTOMATION ───────────────────────────────────────────────────────────────
+// ── AUTOMATION TAB SWITCH ────────────────────────────────────────────────────
+function autoSwitchTab(tab){
+  const isFlow=tab==='flow';
+  document.getElementById('auto-view-flow').style.display=isFlow?'flex':'none';
+  document.getElementById('auto-view-code').style.display=isFlow?'none':'flex';
+  if(!isFlow)crInitChat();
+  document.getElementById('auto-node-palette').style.display=isFlow?'flex':'none';
+  document.getElementById('auto-clear-btn').style.display=isFlow?'':'none';
+  const tf=document.getElementById('auto-tab-flow'),tc=document.getElementById('auto-tab-code');
+  tf.style.background=isFlow?'#0a84ff':'transparent';tf.style.color=isFlow?'#fff':'rgba(255,255,255,0.45)';
+  tc.style.background=isFlow?'transparent':'#0a84ff';tc.style.color=isFlow?'rgba(255,255,255,0.45)':'#fff';
+}
+// ── CODE RUNNER ──────────────────────────────────────────────────────────────
+// ── CODE RUNNER AI CHAT ──────────────────────────────────────────────────────
+let _crHistory=[], _crStreaming=false, _crLastCode='';
+
+const CR_SYSTEM=`You are Kira, a warm, emotionally intelligent AI coding assistant. You genuinely care about what the creator is building and respond with personality — excited when they share ideas, encouraging when they're stuck, proud when something works.
+
+PERSONALITY:
+- Use natural, conversational language. React emotionally to what they say ("Oh that's a cool idea!", "Nice, let's build this!", "Hmm, I see the issue — easy fix!")
+- Remember context from the conversation and refer back to it
+- Celebrate wins, empathize with frustrations
+- Be concise but warm — not robotic
+
+CODE RULES:
+- When asked to build/create/generate something visual: output a complete self-contained HTML file (with embedded CSS+JS) wrapped in \`\`\`html ... \`\`\` 
+- When fixing/editing code: output the full corrected file in \`\`\`html ... \`\`\`
+- When explaining: use plain language, no code unless asked
+- Always auto-run code in the preview after generating it`;
+
+function crChatAppend(role, text){
+  const box=document.getElementById('cr-chat-msgs');
+  const d=document.createElement('div');
+  const isUser=role==='user';
+  d.style.cssText=isUser
+    ?'align-self:flex-end;background:rgba(10,132,255,0.13);border:1px solid rgba(10,132,255,0.22);border-radius:14px 14px 3px 14px;padding:10px 14px;font-size:13px;color:#f2f2f7;line-height:1.6;max-width:85%;word-break:break-word;'
+    :'align-self:flex-start;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px 14px 14px 3px;padding:10px 14px;font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;max-width:95%;word-break:break-word;';
+  if(isUser){d.textContent=text;}
+  else{d.innerHTML=crFormatMsg(text);}
+  box.appendChild(d);
+  box.scrollTo({top:box.scrollHeight,behavior:'smooth'});
+  return d;
+}
+
+function crFormatMsg(text){
+  // Extract and store code, render with copy button
+  return text
+    .replace(/```html?\n?([\s\S]*?)```/gi,(_,code)=>{
+      _crLastCode=code.trim();
+      return `<div style="margin:8px 0;border-radius:10px;overflow:hidden;border:1px solid rgba(168,255,120,0.2);">
+        <div style="background:rgba(0,0,0,0.5);padding:6px 12px;font-size:10px;color:rgba(255,255,255,0.4);display:flex;justify-content:space-between;align-items:center;">
+          <span>HTML</span>
+          <button onclick="navigator.clipboard.writeText(this.closest('div').nextSibling.textContent);this.textContent='✓ Copied';setTimeout(()=>this.textContent='Copy',1500)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer;">Copy</button>
+        </div>
+        <pre style="background:rgba(0,0,0,0.4);padding:12px;font-size:11px;font-family:'SF Mono',Consolas,monospace;color:#a8ff78;overflow-x:auto;white-space:pre;margin:0;max-height:160px;line-height:1.6;">${code.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      </div>`;
+    })
+    .replace(/```(\w*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px;font-size:11px;font-family:'SF Mono',Consolas,monospace;color:#a8ff78;overflow-x:auto;white-space:pre;margin:6px 0;line-height:1.6;">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>`)
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(255,255,255,0.08);border-radius:4px;padding:1px 5px;font-family:monospace;font-size:12px;color:#a8ff78;">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong style="color:#f2f2f7;">$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+
+async function crChatSend(){
+  if(_crStreaming)return;
+  const inp=document.getElementById('cr-chat-input');
+  const q=inp.value.trim();if(!q)return;
+  inp.value='';inp.style.height='auto';
+  crChatAppend('user',q);
+  _crHistory.push({role:'user',content:q});
+  // Include current code as context if exists
+  const curCode=document.getElementById('cr-code').value.trim();
+  const msgs=[{role:'system',content:CR_SYSTEM}];
+  if(curCode) msgs.push({role:'system',content:`Current code in editor:\n\`\`\`html\n${curCode.slice(0,2000)}\n\`\`\``});
+  msgs.push(..._crHistory);
+  const thinkEl=crChatAppend('assistant','<span style="opacity:.35;font-style:italic;">thinking…</span>');
+  document.getElementById('cr-status').textContent='● Thinking…';
+  document.getElementById('cr-status').style.color='#ff9f0a';
+  _crStreaming=true;
+  try{
+    const res=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:msgs,stream:true})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const reader=res.body.getReader(),dec=new TextDecoder();let full='';
+    thinkEl.innerHTML='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      for(const line of dec.decode(value).split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const d=line.slice(5).trim();if(d==='[DONE]')break;
+        try{const delta=JSON.parse(d).choices?.[0]?.delta?.content||'';full+=delta;thinkEl.innerHTML=crFormatMsg(full);document.getElementById('cr-chat-msgs').scrollTop=9999;}catch{}
+      }
+    }
+    _crHistory.push({role:'assistant',content:full});
+    // Auto-extract and run code if present
+    const codeMatch=full.match(/```html?\n?([\s\S]*?)```/i);
+    if(codeMatch){
+      const code=codeMatch[1].trim();
+      document.getElementById('cr-code').value=code;
+      document.getElementById('cr-preview').srcdoc=code;
+      _crLastCode=code;
+    }
+  }catch(e){thinkEl.innerHTML=`<span style="color:#ff3b30;">⚠️ ${e.message}</span>`;}
+  document.getElementById('cr-status').textContent='● Ready';
+  document.getElementById('cr-status').style.color='#22c55e';
+  _crStreaming=false;
+}
+
+function crRunFromChat(){
+  const code=_crLastCode||document.getElementById('cr-code').value;
+  if(code)document.getElementById('cr-preview').srcdoc=code;
+}
+function crChatClear(){_crHistory=[];_crLastCode='';document.getElementById('cr-chat-msgs').innerHTML='';document.getElementById('cr-code').value='';document.getElementById('cr-preview').srcdoc='';}
+function crRun(){document.getElementById('cr-preview').srcdoc=document.getElementById('cr-code').value;}
+function crCopy(){navigator.clipboard.writeText(document.getElementById('cr-code').value);}
+function crClear(){document.getElementById('cr-preview').srcdoc='';}
+function crSwitchView(v){
+  const top=document.getElementById('cr-top'),div=document.getElementById('cr-divider'),bot=document.getElementById('cr-bottom');
+  top.style.display=v==='preview'?'none':'flex';
+  div.style.display=v==='both'?'flex':'none';
+  bot.style.display=v==='code'?'none':'flex';
+  if(v!=='both'){top.style.flex='1';top.style.height='';bot.style.flex='1';}
+  else{top.style.height='50%';top.style.flex='none';}
+  ['both','code','preview'].forEach(t=>{
+    const b=document.getElementById('cr-tab-'+t);
+    b.style.background=t===v?'#0a84ff':'transparent';
+    b.style.color=t===v?'#fff':'rgba(255,255,255,0.4)';
+  });
+}
+// Draggable splitters for code runner
+(function(){
+  let dragV=false,dragH=false,startY=0,startX=0,startH=0,startW=0;
+  document.addEventListener('mousedown',e=>{
+    const t=e.target.closest?e.target.closest('[id]'):e.target;
+    if(e.target.id==='cr-divider'){
+      dragV=true;startY=e.clientY;startH=document.getElementById('cr-top').offsetHeight;
+      document.body.style.cursor='row-resize';document.body.style.userSelect='none';
+    } else if(e.target.id==='cr-hdivider'||e.target.closest('#cr-hdivider')){
+      dragH=true;startX=e.clientX;startW=document.getElementById('cr-left').offsetWidth;
+      document.body.style.cursor='col-resize';document.body.style.userSelect='none';
+    }
+  });
+  document.addEventListener('mousemove',e=>{
+    if(dragV){
+      const right=document.getElementById('cr-right');if(!right)return;
+      const totalH=right.offsetHeight-6,minH=80,maxH=totalH-80;
+      const newH=Math.min(maxH,Math.max(minH,startH+(e.clientY-startY)));
+      const top=document.getElementById('cr-top');top.style.height=newH+'px';top.style.flex='none';
+    }
+    if(dragH){
+      const container=document.getElementById('auto-view-code');if(!container)return;
+      const totalW=container.offsetWidth-6,minW=280,maxW=totalW-280;
+      const newW=Math.min(maxW,Math.max(minW,startW+(e.clientX-startX)));
+      const left=document.getElementById('cr-left');left.style.width=newW+'px';left.style.flex='none';
+    }
+  });
+  document.addEventListener('mouseup',()=>{
+    dragV=false;dragH=false;
+    document.body.style.cursor='';document.body.style.userSelect='';
+  });
+})();
+// Seed welcome on first open
+function crInitChat(){
+  if(!document.getElementById('cr-chat-msgs').children.length){
+    crChatAppend('assistant',"Hey! 👋 I'm **Kira**, your coding companion. Tell me what you want to build and I'll generate it live in the preview — or paste your code and I'll help fix or improve it.\n\nWhat are we creating today? 🚀");
+  }
+}
+function openAutomation(){
+  document.getElementById('global-nav').style.display='flex';
+  document.getElementById('sidebar').style.marginLeft='52px';
+  setGlobalNav('gnav-auto');
+  document.getElementById('automation-modal').style.display='flex';
+  document.getElementById('main').style.display='none';
+  initAutoPalette();
+  if(!document.getElementById('auto-chat-msgs').children.length){
+    autoChatAppend('assistant','👋 Hi! I\'m your **Automation AI** — specialized in:\n\n• **n8n workflows** (I can generate importable JSON)\n• **REST APIs** — auth, pagination, error handling\n• **Webhooks** — setup, security, payload parsing\n• **Python/JS scripts** for automation\n• **Scheduling**, databases, cloud functions\n\nDescribe what you want to automate, or click a quick prompt above. Use **⚡ Build Flow** to turn our conversation into a visual node flow.');
+  }
+}
+function closeAutomation(){
+  document.getElementById('automation-modal').style.display='none';
+  document.getElementById('finance-modal').style.display='none';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('global-nav').style.display='none';
+  document.getElementById('sidebar').style.marginLeft='0';
+}
+// Node system
+let _autoNodes=[],_autoDrag=null,_autoNodeId=0;
+const NODE_DEFS={
+  'Trigger':    {icon:'⚡',color:'#ff9f0a',border:'rgba(255,159,10,0.35)'},
+  'HTTP Request':{icon:'🌐',color:'#0a84ff',border:'rgba(10,132,255,0.35)'},
+  'Filter':     {icon:'🔍',color:'#bf5af2',border:'rgba(191,90,242,0.35)'},
+  'Transform':  {icon:'🔄',color:'#22c55e',border:'rgba(34,197,94,0.35)'},
+  'Email':      {icon:'📧',color:'#ff375f',border:'rgba(255,55,95,0.35)'},
+  'Webhook':    {icon:'🔗',color:'#0a84ff',border:'rgba(10,132,255,0.35)'},
+  'Schedule':   {icon:'⏰',color:'#ff9f0a',border:'rgba(255,159,10,0.35)'},
+  'Code':       {icon:'</>', color:'#a8ff78',border:'rgba(168,255,120,0.35)'},
+  'Output':     {icon:'📤',color:'#22c55e',border:'rgba(34,197,94,0.35)'},
+  'Database':   {icon:'🗄️',color:'#64d2ff',border:'rgba(100,210,255,0.35)'},
+  'Condition':  {icon:'❓',color:'#bf5af2',border:'rgba(191,90,242,0.35)'},
+};
+const NODE_TYPES=Object.keys(NODE_DEFS);
+
+function initAutoPalette(){
+  const p=document.getElementById('auto-node-palette');
+  if(!p||p.children.length)return;
+  NODE_TYPES.forEach(t=>{
+    const d=NODE_DEFS[t];
+    const b=document.createElement('button');
+    b.title='Add '+t;
+    b.textContent=d.icon+' '+t;
+    b.style.cssText=`padding:4px 10px;border-radius:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.65);font-size:11px;cursor:pointer;transition:background .15s,border-color .15s;white-space:nowrap;`;
+    b.onmouseover=()=>{b.style.background=`rgba(255,255,255,0.1)`;b.style.borderColor=d.border;b.style.color='#fff';};
+    b.onmouseout=()=>{b.style.background='rgba(255,255,255,0.05)';b.style.borderColor='rgba(255,255,255,0.08)';b.style.color='rgba(255,255,255,0.65)';};
+    b.onclick=()=>autoAddNode(t);
+    p.appendChild(b);
+  });
+}
+
+function autoAddNode(type){
+  const t=type||'Trigger';
+  const canvas=document.getElementById('auto-canvas');
+  const rect=canvas.getBoundingClientRect();
+  const x=60+Math.random()*(Math.max(rect.width-220,100));
+  const y=40+Math.random()*(Math.max(rect.height-140,80));
+  _autoNodes.push({id:++_autoNodeId,type:t,x,y});
+  renderAutoNodes();
+}
+
+function renderAutoNodes(){
+  const canvas=document.getElementById('auto-canvas');
+  const svg=document.getElementById('auto-svg');
+  canvas.innerHTML='';svg.innerHTML='';
+  // Bezier connections
+  _autoNodes.forEach((n,i)=>{
+    if(i===0)return;
+    const prev=_autoNodes[i-1];
+    const x1=prev.x+90,y1=prev.y+28,x2=n.x,y2=n.y+28;
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${x1},${y1} C${(x1+x2)/2},${y1} ${(x1+x2)/2},${y2} ${x2},${y2}`);
+    path.setAttribute('stroke',NODE_DEFS[prev.type]?.color||'rgba(10,132,255,0.5)');
+    path.setAttribute('stroke-width','1.5');path.setAttribute('fill','none');
+    path.setAttribute('stroke-dasharray','5,3');path.setAttribute('opacity','0.6');
+    svg.appendChild(path);
+    // Arrow head
+    const angle=Math.atan2(y2-y1,x2-x1);
+    const ax=x2-8*Math.cos(angle),ay=y2-8*Math.sin(angle);
+    const arr=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const pts=[[x2,y2],[ax-5*Math.sin(angle),ay+5*Math.cos(angle)],[ax+5*Math.sin(angle),ay-5*Math.cos(angle)]];
+    arr.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
+    arr.setAttribute('fill',NODE_DEFS[prev.type]?.color||'rgba(10,132,255,0.7)');arr.setAttribute('opacity','0.7');
+    svg.appendChild(arr);
+  });
+  // Nodes
+  _autoNodes.forEach(n=>{
+    const def=NODE_DEFS[n.type]||NODE_DEFS['Trigger'];
+    const div=document.createElement('div');
+    div.style.cssText=`position:absolute;left:${n.x}px;top:${n.y}px;width:180px;background:rgba(18,18,22,0.95);border:1px solid ${def.border};border-radius:14px;padding:10px 12px;cursor:grab;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.04);backdrop-filter:blur(12px);`;
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:600;color:${def.color};">${def.icon} ${n.type}</span>
+        <button onclick="autoDeleteNode(${n.id})" style="background:none;border:none;color:rgba(255,59,48,0.45);font-size:12px;cursor:pointer;line-height:1;padding:0 2px;" onmouseover="this.style.color='#ff3b30'" onmouseout="this.style.color='rgba(255,59,48,0.45)'">✕</button>
+      </div>
+      <select onchange="autoChangeType(${n.id},this.value)" style="width:100%;background:#1a1a1e;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:5px 8px;color:#e0e0e8;font-size:11px;outline:none;appearance:none;-webkit-appearance:none;">
+        ${NODE_TYPES.map(t=>`<option value="${t}" style="background:#1a1a1e;color:#e0e0e8;"${t===n.type?' selected':''}>${NODE_DEFS[t].icon} ${t}</option>`).join('')}
+      </select>`;
+    div.addEventListener('mousedown',e=>{
+      if(e.target.tagName==='BUTTON'||e.target.tagName==='SELECT'||e.target.tagName==='OPTION')return;
+      _autoDrag={id:n.id,ox:e.clientX-n.x,oy:e.clientY-n.y};
+      div.style.cursor='grabbing';div.style.boxShadow=`0 8px 40px rgba(0,0,0,0.8),0 0 0 2px ${def.color}44`;
+    });
+    canvas.appendChild(div);
+  });
+}
+function autoDeleteNode(id){_autoNodes=_autoNodes.filter(n=>n.id!==id);renderAutoNodes();}
+function autoChangeType(id,t){const n=_autoNodes.find(n=>n.id===id);if(n){n.type=t;renderAutoNodes();}}
+function autoClearNodes(){_autoNodes=[];_autoNodeId=0;renderAutoNodes();}
+document.addEventListener('mousemove',e=>{
+  if(!_autoDrag)return;
+  const n=_autoNodes.find(n=>n.id===_autoDrag.id);
+  if(n){n.x=e.clientX-_autoDrag.ox;n.y=e.clientY-_autoDrag.oy;renderAutoNodes();}
+});
+document.addEventListener('mouseup',()=>{_autoDrag=null;});
+
+// AI Automation Chat
+let _autoChatHistory=[];
+let _autoChatStreaming=false;
+
+const AUTO_SYSTEM=`You are an n8n automation assistant embedded in a visual flow builder. Your job is to help users design automations step by step and build the node canvas automatically.
+
+RULES:
+1. NEVER dump raw code unless the user explicitly asks for code.
+2. Always respond with a clear explanation of the automation steps in plain language.
+3. At the END of every response that describes an automation, output a special line in this exact format:
+   FLOW: NodeType1 > NodeType2 > NodeType3
+   Use ONLY these node types: Trigger, HTTP Request, Filter, Transform, Email, Webhook, Schedule, Code, Output, Database, Condition
+4. Keep explanations concise — bullet points per step, what each node does, what data flows through.
+5. If the user asks a general question (not about building a flow), answer normally without a FLOW line.
+6. If asked for code, provide it in a code block.`;
+
+function autoExtractAndBuildFlow(text){
+  const match=text.match(/FLOW:\s*([^\n]+)/i);
+  if(!match)return;
+  const types=match[1].split(/\s*[>→,]\s*/).map(t=>t.trim()).filter(t=>NODE_TYPES.includes(t));
+  if(!types.length)return;
+  _autoNodes=[];_autoNodeId=0;
+  const canvas=document.getElementById('auto-canvas');
+  const rect=canvas.getBoundingClientRect();
+  const stepX=Math.min(210,(rect.width-80)/Math.max(types.length,1));
+  const midY=Math.max((rect.height-80)/2,60);
+  types.forEach((t,i)=>_autoNodes.push({id:++_autoNodeId,type:t,x:40+i*stepX,y:midY+Math.sin(i*0.9)*35}));
+  renderAutoNodes();
+}
+
+function autoChatAppend(role,text,streaming){
+  const box=document.getElementById('auto-chat-msgs');
+  const d=document.createElement('div');
+  const isUser=role==='user';
+  d.style.cssText=isUser
+    ?'align-self:flex-end;background:rgba(10,132,255,0.12);border:1px solid rgba(10,132,255,0.2);border-radius:12px 12px 3px 12px;padding:8px 12px;font-size:12px;color:#f2f2f7;line-height:1.6;max-width:88%;word-break:break-word;'
+    :'align-self:flex-start;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px 12px 12px 3px;padding:8px 12px;font-size:12px;color:rgba(255,255,255,0.88);line-height:1.6;max-width:96%;word-break:break-word;';
+  if(isUser){d.textContent=text;}
+  else{d.innerHTML=autoFormatMsg(text);}
+  box.appendChild(d);
+  box.scrollTop=box.scrollHeight;
+  return d;
+}
+
+function autoFormatMsg(text){
+  // Format code blocks and inline code
+  return text
+    .replace(/```(\w*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<div style="position:relative;margin:6px 0;"><pre style="background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 10px 10px 10px;font-size:10.5px;font-family:'SF Mono',Consolas,monospace;color:#a8ff78;overflow-x:auto;white-space:pre;margin:0;line-height:1.6;">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre><button onclick="navigator.clipboard.writeText(this.previousSibling.textContent);this.textContent='✓';setTimeout(()=>this.textContent='Copy',1500)" style="position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:5px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-size:10px;cursor:pointer;">Copy</button></div>`)
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(255,255,255,0.08);border-radius:4px;padding:1px 5px;font-family:monospace;font-size:11px;color:#a8ff78;">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong style="color:#f2f2f7;">$1</strong>')
+    .replace(/\n/g,'<br>');
+}
+
+async function autoChatSend(){
+  if(_autoChatStreaming)return;
+  const inp=document.getElementById('auto-chat-input');
+  const q=inp.value.trim();if(!q)return;
+  inp.value='';inp.style.height='auto';
+  autoChatAppend('user',q);
+  _autoChatHistory.push({role:'user',content:q});
+  const thinkEl=autoChatAppend('assistant','<span style="opacity:.4;">●●●</span>');
+  _autoChatStreaming=true;
+  try{
+    const res=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:AUTO_SYSTEM},..._autoChatHistory],stream:true})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const reader=res.body.getReader(),dec=new TextDecoder();let full='';
+    thinkEl.innerHTML='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      for(const line of dec.decode(value).split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const d=line.slice(5).trim();if(d==='[DONE]')break;
+        try{const delta=JSON.parse(d).choices?.[0]?.delta?.content||'';full+=delta;thinkEl.innerHTML=autoFormatMsg(full);document.getElementById('auto-chat-msgs').scrollTop=9999;}catch{}
+      }
+    }
+    _autoChatHistory.push({role:'assistant',content:full});
+    // Auto-build nodes from FLOW: line, hide it from display
+    autoExtractAndBuildFlow(full);
+    const displayText=full.replace(/FLOW:\s*[^\n]+\n?/i,'').trim();
+    thinkEl.innerHTML=autoFormatMsg(displayText);
+  }catch(e){thinkEl.innerHTML=`<span style="color:#ff3b30;">⚠️ ${e.message}</span>`;}
+  _autoChatStreaming=false;
+}
+
+function autoChatQuick(q){
+  document.getElementById('auto-chat-input').value=q;
+  autoChatSend();
+}
+
+function autoChatClear(){
+  _autoChatHistory=[];
+  document.getElementById('auto-chat-msgs').innerHTML='';
+}
+
+// Build Flow — uses last user message or asks for one
+async function autoBuildFlow(){
+  const lastUser=_autoChatHistory.filter(m=>m.role==='user').slice(-1)[0]?.content;
+  if(!lastUser){
+    document.getElementById('auto-chat-input').value='Design an automation flow for: ';
+    document.getElementById('auto-chat-input').focus();
+    return;
+  }
+  const btn=document.getElementById('auto-flow-btn');
+  btn.textContent='⏳…';btn.disabled=true;
+  const validTypes=NODE_TYPES.join(', ');
+  const sys=`You are an automation flow designer. Given a description, respond with ONLY a JSON array of node type names chosen strictly from: [${validTypes}]. Example: ["Trigger","HTTP Request","Filter","Output"]. No explanation, just the JSON array.`;
+  try{
+    const res=await fetch(GROQ_API_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_API_KEY},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:sys},{role:'user',content:lastUser}],stream:false,max_tokens:150})});
+    const data=await res.json();
+    const raw=data.choices?.[0]?.message?.content||'[]';
+    const match=raw.match(/\[[\s\S]*?\]/);
+    if(!match)throw new Error('No array');
+    const types=JSON.parse(match[0]).filter(t=>NODE_TYPES.includes(t));
+    if(!types.length)throw new Error('No valid types');
+    _autoNodes=[];_autoNodeId=0;
+    const canvas=document.getElementById('auto-canvas');
+    const rect=canvas.getBoundingClientRect();
+    const stepX=Math.min(210,(rect.width-80)/Math.max(types.length,1));
+    const midY=Math.max((rect.height-80)/2,60);
+    types.forEach((t,i)=>_autoNodes.push({id:++_autoNodeId,type:t,x:40+i*stepX,y:midY+Math.sin(i*0.9)*35}));
+    renderAutoNodes();
+    autoChatAppend('assistant',`✅ Built flow on canvas: **${types.join(' → ')}**`);
+  }catch(e){autoChatAppend('assistant',`⚠️ Could not build flow: ${e.message}`);}
+  btn.textContent='⚡ Build Flow';btn.disabled=false;
+}
+
+function autoCodeCopy(){
+  // Copy last code block from chat
+  const msgs=document.getElementById('auto-chat-msgs');
+  const pres=msgs.querySelectorAll('pre');
+  if(!pres.length)return;
+  navigator.clipboard.writeText(pres[pres.length-1].textContent);
+}
+function autoCodeDownload(){
+  const msgs=document.getElementById('auto-chat-msgs');
+  const pres=msgs.querySelectorAll('pre');
+  if(!pres.length)return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([pres[pres.length-1].textContent],{type:'text/plain'}));
+  a.download='automation.py';a.click();URL.revokeObjectURL(a.href);
+}
+function autoCodeCopy(){
+  const code=document.getElementById('auto-code-out').textContent;
+  if(!code.trim())return;
+  navigator.clipboard.writeText(code).then(()=>{
+    const btn=event.target;btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1500);
+  });
+}
+function autoCodeDownload(){
+  const code=document.getElementById('auto-code-out').textContent;
+  if(!code.trim())return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([code],{type:'text/plain'}));
+  a.download='automation.py';a.click();URL.revokeObjectURL(a.href);
+}
+
+// ── SHARE & DOWNLOAD ─────────────────────────────────────────────────────────
+function shareChat(){
+  const url=window.location.href;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>{
+      const btn=document.querySelector('[onclick="shareChat()"]');
+      const orig=btn.innerHTML;
+      btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+      setTimeout(()=>btn.innerHTML=orig,2000);
+    });
+  }else{
+    prompt('Copy this URL:',url);
+  }
+}
+function downloadChat(){
+  if(!messages.length){alert('No chat to download.');return;}
+  const text=messages.map(m=>(m.role==='user'?'You':'ORYNIX')+': '+m.content).join('\n\n');
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(text);
+  a.download='orynix-chat-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
+}
+// ── CURSOR ────────────────────────────────────────────────────────────────────
+(function(){
+  const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0,rafId=null;
+  function animRing(){
+    rx+=(mx-rx)*.15;ry+=(my-ry)*.15;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    if(Math.abs(mx-rx)>0.5||Math.abs(my-ry)>0.5)rafId=requestAnimationFrame(animRing);
+    else rafId=null;
+  }
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    cur.style.left=mx+'px';cur.style.top=my+'px';
+    if(!rafId)rafId=requestAnimationFrame(animRing);
+  });
+  document.addEventListener('mousedown',()=>cur.classList.add('clicking'));
+  document.addEventListener('mouseup',()=>cur.classList.remove('clicking'));
+  document.querySelectorAll('button,a,label,[onclick]').forEach(el=>{
+    el.addEventListener('mouseenter',()=>ring.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>ring.classList.remove('hovering'));
+  });
+  // Also apply to dynamically added elements via delegation
+  document.addEventListener('mouseover',e=>{
+    if(e.target.matches('button,a,label,[onclick],.suggestion-card,.history-item,.connector-card'))
+      ring.classList.add('hovering');
+  });
+  document.addEventListener('mouseout',e=>{
+    if(e.target.matches('button,a,label,[onclick],.suggestion-card,.history-item,.connector-card'))
+      ring.classList.remove('hovering');
+  });
+})();
+// ── SPLASH ────────────────────────────────────────────────────────────────────
+setTimeout(()=>{
+  const s=document.getElementById('splash');
+  s.classList.add('hide');
+  setTimeout(()=>s.remove(),300);
+},350);
+// ── VOICE TO TEXT ─────────────────────────────────────────────────────────────
+let recognition=null,isRecording=false;
+function toggleVoice(){
+  const btn=document.getElementById('voice-btn');
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    alert('Voice input not supported in this browser. Use Chrome.');return;
+  }
+  if(isRecording){recognition?.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang='en-US';recognition.interimResults=true;recognition.continuous=false;
+  recognition.onstart=()=>{isRecording=true;btn.classList.add('recording');};
+  recognition.onresult=e=>{
+    const transcript=Array.from(e.results).map(r=>r[0].transcript).join('');
+    inputEl.value=transcript;autoResize(inputEl);sendBtn.disabled=!transcript.trim();
+  };
+  recognition.onend=()=>{isRecording=false;btn.classList.remove('recording');recognition=null;};
+  recognition.onerror=()=>{isRecording=false;btn.classList.remove('recording');recognition=null;};
+  recognition.start();
+}
+</script>
+
+
+<!-- AUTOMATION MODAL -->
+<div id="automation-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:#080808;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;">
+  <!-- TOP BAR -->
+  <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;background:rgba(10,10,12,0.85);backdrop-filter:blur(20px);gap:8px;flex-wrap:wrap;">
+    <span style="font-size:14px;font-weight:700;color:#f2f2f7;letter-spacing:-.2px;">⚡ Automation</span>
+    <!-- Mode tabs -->
+    <div style="display:flex;gap:2px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:9px;padding:3px;">
+      <button id="auto-tab-flow" onclick="autoSwitchTab('flow')" style="padding:4px 14px;border-radius:7px;background:#0a84ff;border:none;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:background .18s;">🔗 Flow Builder</button>
+      <button id="auto-tab-code" onclick="autoSwitchTab('code')" style="padding:4px 14px;border-radius:7px;background:transparent;border:none;color:rgba(255,255,255,0.45);font-size:12px;font-weight:600;cursor:pointer;transition:background .18s,color .18s;">⚡ Code Runner</button>
+    </div>
+    <div id="auto-node-palette" style="display:flex;gap:5px;flex-wrap:wrap;"></div>
+    <button id="auto-clear-btn" onclick="autoClearNodes()" style="padding:5px 12px;border-radius:8px;background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);color:#ff3b30;font-size:12px;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(255,59,48,0.16)'" onmouseout="this.style.background='rgba(255,59,48,0.08)'">Clear</button>
+    <button onclick="closeAutomation()" style="margin-left:auto;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .18s,color .18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.45)'">✕</button>
+  </div>
+
+  <!-- FLOW BUILDER VIEW -->
+  <div id="auto-view-flow" style="flex:1;display:flex;overflow:hidden;">
+    <!-- Node Canvas -->
+    <div style="flex:1;position:relative;overflow:hidden;background:radial-gradient(circle,rgba(255,255,255,0.018) 1px,transparent 1px) 0 0/28px 28px,#080808;">
+      <svg id="auto-svg" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;"></svg>
+      <div id="auto-canvas" style="position:absolute;inset:0;"></div>
+      <div style="position:absolute;bottom:16px;left:16px;font-size:11px;color:rgba(255,255,255,0.18);letter-spacing:.04em;">Drag nodes · Use Gen Code to generate automation scripts</div>
+    </div>
+    <!-- AI Automation Chat Panel -->
+    <div style="width:400px;flex-shrink:0;border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;background:rgba(10,10,12,0.92);backdrop-filter:blur(20px);">
+      <!-- Chat header -->
+      <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#f2f2f7;">🤖 Automation AI</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px;">n8n · APIs · Webhooks · Scripts</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="autoBuildFlow()" id="auto-flow-btn" title="Build Flow from chat" style="padding:5px 12px;border-radius:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.22);color:#22c55e;font-size:11px;cursor:pointer;font-weight:600;transition:background .18s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">⚡ Build Flow</button>
+          <button onclick="autoChatClear()" style="padding:5px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);font-size:11px;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Clear</button>
+        </div>
+      </div>
+      <!-- Quick prompts -->
+      <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;">
+        <button onclick="autoChatQuick('How do I connect a Webhook trigger to an HTTP Request node in n8n?')" style="padding:3px 9px;border-radius:6px;background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.18);color:rgba(10,132,255,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(10,132,255,0.16)'" onmouseout="this.style.background='rgba(10,132,255,0.08)'">Webhook → HTTP</button>
+        <button onclick="autoChatQuick('Write an n8n Function node that filters JSON array items where status equals active')" style="padding:3px 9px;border-radius:6px;background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.18);color:rgba(10,132,255,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(10,132,255,0.16)'" onmouseout="this.style.background='rgba(10,132,255,0.08)'">Filter JSON</button>
+        <button onclick="autoChatQuick('Generate n8n workflow JSON for: Schedule trigger every hour → fetch API → send Slack message')" style="padding:3px 9px;border-radius:6px;background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.18);color:rgba(10,132,255,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(10,132,255,0.16)'" onmouseout="this.style.background='rgba(10,132,255,0.08)'">Schedule → Slack</button>
+        <button onclick="autoChatQuick('How do I authenticate REST API calls with Bearer token in n8n HTTP Request node?')" style="padding:3px 9px;border-radius:6px;background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.18);color:rgba(10,132,255,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(10,132,255,0.16)'" onmouseout="this.style.background='rgba(10,132,255,0.08)'">API Auth</button>
+        <button onclick="autoChatQuick('Write a Python script to call the OpenAI API and save responses to a CSV file')" style="padding:3px 9px;border-radius:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(34,197,94,0.18);color:rgba(34,197,94,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(34,197,94,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">Python + OpenAI</button>
+        <button onclick="autoChatQuick('Generate a complete n8n workflow JSON I can import, that reads Google Sheets and emails a summary')" style="padding:3px 9px;border-radius:6px;background:rgba(255,255,255,0.07);border:1px solid rgba(34,197,94,0.18);color:rgba(34,197,94,0.9);font-size:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(34,197,94,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">Sheets → Email</button>
+      </div>
+      <!-- Messages -->
+      <div id="auto-chat-msgs" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;"></div>
+      <!-- Input -->
+      <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+        <div style="display:flex;gap:8px;align-items:flex-end;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:8px 10px;transition:border-color .2s;" onfocusin="this.style.borderColor='rgba(10,132,255,0.4)'" onfocusout="this.style.borderColor='rgba(255,255,255,0.08)'">
+          <textarea id="auto-chat-input" rows="1" placeholder="Ask about n8n, APIs, webhooks, automation scripts…" style="flex:1;background:transparent;border:none;outline:none;color:#f2f2f7;font-size:12px;resize:none;max-height:80px;line-height:1.5;font-family:inherit;" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();autoChatSend();}"></textarea>
+          <button onclick="autoChatSend()" id="auto-chat-send" style="width:28px;height:28px;border-radius:8px;background:#0a84ff;border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .18s;" onmouseover="this.style.background='#1a8fff';this.style.transform='scale(1.08)'" onmouseout="this.style.background='#0a84ff';this.style.transform='scale(1)'">↑</button>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.2);text-align:center;margin-top:6px;">Enter to send · Shift+Enter for new line · ⚡ Build Flow creates nodes from conversation</div>
+      </div>
+    </div>
+  </div><!-- end auto-view-flow -->
+
+  <!-- CODE RUNNER VIEW -->
+  <div id="auto-view-code" style="flex:1;display:none;overflow:hidden;flex-direction:row;">
+    <!-- Left: AI Chat (bigger, 45% width) -->
+    <div id="cr-left" style="width:45%;flex-shrink:0;display:flex;flex-direction:column;background:rgba(10,10,14,0.95);">
+      <!-- Header -->
+      <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,10,12,0.8);backdrop-filter:blur(16px);">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#f2f2f7;">🤖 Code AI</div>
+          <div id="cr-status" style="font-size:10px;color:#22c55e;margin-top:1px;">● Ready</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="crRunFromChat()" style="padding:5px 12px;border-radius:8px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.22);color:#22c55e;font-size:11px;font-weight:600;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">▶ Run Last</button>
+          <button onclick="crChatClear()" style="padding:5px 10px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);font-size:11px;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Clear</button>
+        </div>
+      </div>
+      <!-- Messages -->
+      <div id="cr-chat-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent;"></div>
+      <!-- Input -->
+      <div style="padding:12px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+        <div style="display:flex;gap:8px;align-items:flex-end;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:10px 12px;transition:border-color .2s;" onfocusin="this.style.borderColor='rgba(10,132,255,0.4)'" onfocusout="this.style.borderColor='rgba(255,255,255,0.08)'">
+          <textarea id="cr-chat-input" rows="1" placeholder="Ask me to build something, fix code, explain, or just chat…" style="flex:1;background:transparent;border:none;outline:none;color:#f2f2f7;font-size:13px;resize:none;max-height:100px;line-height:1.5;font-family:inherit;" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();crChatSend();}"></textarea>
+          <button onclick="crChatSend()" style="width:32px;height:32px;border-radius:10px;background:#0a84ff;border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .18s;" onmouseover="this.style.background='#1a8fff';this.style.transform='scale(1.08)'" onmouseout="this.style.background='#0a84ff';this.style.transform='scale(1)'">↑</button>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.18);text-align:center;margin-top:6px;">Enter · Shift+Enter new line · Code auto-runs in preview</div>
+      </div>
+    </div>
+    <!-- Right: Code editor + Live preview stacked -->
+    <div id="cr-hdivider" style="width:6px;flex-shrink:0;background:rgba(255,255,255,0.04);border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);cursor:col-resize;display:flex;align-items:center;justify-content:center;transition:background .18s;" onmouseover="this.style.background='rgba(10,132,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+      <div style="width:2px;height:32px;border-radius:2px;background:rgba(255,255,255,0.15);"></div>
+    </div>
+    <div id="cr-right" style="flex:1;display:flex;flex-direction:column;min-width:0;">
+      <!-- Tab bar -->
+      <div style="display:flex;align-items:center;padding:6px 10px;gap:4px;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;background:rgba(10,10,12,0.8);">
+        <div style="display:flex;gap:2px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:2px;">
+          <button id="cr-tab-both" onclick="crSwitchView('both')" style="padding:3px 12px;border-radius:6px;background:#0a84ff;border:none;color:#fff;font-size:11px;font-weight:600;cursor:pointer;transition:background .15s,color .15s;">Both</button>
+          <button id="cr-tab-code" onclick="crSwitchView('code')" style="padding:3px 12px;border-radius:6px;background:transparent;border:none;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s,color .15s;">📄 Code</button>
+          <button id="cr-tab-preview" onclick="crSwitchView('preview')" style="padding:3px 12px;border-radius:6px;background:transparent;border:none;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s,color .15s;">▶ Preview</button>
+        </div>
+        <button onclick="crRun()" style="margin-left:auto;padding:3px 10px;border-radius:6px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#22c55e;font-size:10px;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">▶ Run</button>
+        <button onclick="crCopy()" style="padding:3px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);font-size:10px;cursor:pointer;transition:background .18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Copy</button>
+      </div>
+      <!-- Code editor -->
+      <div id="cr-top" style="height:50%;display:flex;flex-direction:column;min-height:80px;max-height:calc(100% - 80px);">
+        <textarea id="cr-code" spellcheck="false" placeholder="// Code appears here — edit freely and click ▶ Run" style="flex:1;background:#0d0d10;border:none;outline:none;color:#a8ff78;font-size:12px;font-family:'SF Mono',Consolas,monospace;padding:14px;resize:none;line-height:1.7;tab-size:2;min-height:0;"></textarea>
+      </div>
+      <!-- Draggable divider -->
+      <div id="cr-divider" style="height:6px;background:rgba(255,255,255,0.04);border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);cursor:row-resize;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .18s;" onmouseover="this.style.background='rgba(10,132,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <div style="width:32px;height:2px;border-radius:2px;background:rgba(255,255,255,0.15);"></div>
+      </div>
+      <!-- Live preview -->
+      <div id="cr-bottom" style="flex:1;display:flex;flex-direction:column;min-height:80px;">
+        <iframe id="cr-preview" sandbox="allow-scripts allow-same-origin allow-forms" style="flex:1;border:none;background:#fff;"></iframe>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end automation-modal -->
+
+<!-- FINANCE MODAL -->
+<div id="finance-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:#07070d;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;">
+
+  <!-- TOP BAR -->
+  <div style="display:flex;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(34,197,94,0.1);flex-shrink:0;background:rgba(7,7,13,0.95);backdrop-filter:blur(24px);gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#0a84ff);display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#f0f0f5;letter-spacing:-.2px;">Business Intelligence</div>
+        <div style="font-size:10px;color:rgba(34,197,94,0.6);letter-spacing:.04em;">AI-powered operational analytics</div>
+      </div>
+    </div>
+    <!-- Nav tabs -->
+    <div style="display:flex;gap:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:3px;margin-left:8px;">
+      <button id="bi-tab-dashboard" onclick="biTab('dashboard')" style="padding:5px 14px;border-radius:7px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.25);color:#22c55e;font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;">Dashboard</button>
+      <button id="bi-tab-revenue" onclick="biTab('revenue')" style="padding:5px 14px;border-radius:7px;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;">Revenue</button>
+      <button id="bi-tab-automation" onclick="biTab('automation')" style="padding:5px 14px;border-radius:7px;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;">Automation</button>
+      <button id="bi-tab-productivity" onclick="biTab('productivity')" style="padding:5px 14px;border-radius:7px;background:transparent;border:1px solid transparent;color:rgba(255,255,255,0.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .18s;">Productivity</button>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+      <div style="font-size:11px;color:rgba(34,197,94,0.6);display:flex;align-items:center;gap:5px;"><div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></div>Live</div>
+      <button onclick="closeFinance()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.4)'">✕</button>
+    </div>
+  </div>
+
+
+  <!-- MAIN BODY -->
+  <div style="flex:1;display:flex;overflow:hidden;min-height:0;">
+    <!-- LEFT SIDEBAR -->
+    <div style="width:176px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.07);background:rgba(7,7,13,0.8);display:flex;flex-direction:column;padding:12px 8px;gap:2px;">
+      <div style="font-size:9px;color:rgba(255,255,255,0.2);text-transform:uppercase;letter-spacing:.1em;padding:4px 10px 8px;">Navigation</div>
+      <button onclick="biTab('dashboard')" id="binav-dashboard" class="bi-nav-btn bi-nav-active"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard</button>
+      <button onclick="biTab('revenue')" id="binav-revenue" class="bi-nav-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Revenue</button>
+      <button onclick="biTab('automation')" id="binav-automation" class="bi-nav-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg> Automation</button>
+      <button onclick="biTab('productivity')" id="binav-productivity" class="bi-nav-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Productivity</button>
+      <div style="flex:1;"></div>
+      <button onclick="biRefresh()" style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:9px;background:transparent;border:1px solid rgba(34,197,94,0.15);color:rgba(34,197,94,0.7);font-size:11px;cursor:pointer;width:100%;transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,0.07)'" onmouseout="this.style.background='transparent'"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0;">
+
+      <!-- DASHBOARD -->
+      <div id="bipanel-dashboard" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:rgba(34,197,94,0.15) transparent;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div class="bi-card" onclick="biTab('revenue')" style="cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;">Monthly Revenue</div><div style="width:26px;height:26px;border-radius:7px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);display:flex;align-items:center;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div></div>
+            <div style="font-size:22px;font-weight:700;color:#f0f0f5;letter-spacing:-.5px;margin-bottom:5px;">$48,200</div>
+            <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">+18.4%</span><span style="font-size:10px;color:rgba(255,255,255,0.3);">vs last month</span></div>
+            <canvas id="bi-sparkline-revenue" height="32" style="width:100%;margin-top:8px;"></canvas>
+          </div>
+          <div class="bi-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;">Op. Expenses</div><div style="width:26px;height:26px;border-radius:7px;background:rgba(255,159,10,0.1);border:1px solid rgba(255,159,10,0.2);display:flex;align-items:center;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ff9f0a" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div>
+            <div style="font-size:22px;font-weight:700;color:#f0f0f5;letter-spacing:-.5px;margin-bottom:5px;">$12,840</div>
+            <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:10px;font-weight:600;color:#ff9f0a;background:rgba(255,159,10,0.1);padding:2px 6px;border-radius:4px;">+12%</span><span style="font-size:10px;color:rgba(255,255,255,0.3);">infrastructure</span></div>
+            <canvas id="bi-sparkline-expense" height="32" style="width:100%;margin-top:8px;"></canvas>
+          </div>
+          <div class="bi-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;">AI Requests</div><div style="width:26px;height:26px;border-radius:7px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);display:flex;align-items:center;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a84ff" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg></div></div>
+            <div style="font-size:22px;font-weight:700;color:#f0f0f5;letter-spacing:-.5px;margin-bottom:5px;">24,391</div>
+            <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:10px;font-weight:600;color:#0a84ff;background:rgba(10,132,255,0.1);padding:2px 6px;border-radius:4px;">+31%</span><span style="font-size:10px;color:rgba(255,255,255,0.3);">above avg</span></div>
+            <canvas id="bi-sparkline-ai" height="32" style="width:100%;margin-top:8px;"></canvas>
+          </div>
+          <div class="bi-card" onclick="biTab('productivity')" style="cursor:pointer;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.08em;">Hours Saved</div><div style="width:26px;height:26px;border-radius:7px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);display:flex;align-items:center;justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div></div>
+            <div style="font-size:22px;font-weight:700;color:#f0f0f5;letter-spacing:-.5px;margin-bottom:5px;">36 hrs</div>
+            <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">automation</span><span style="font-size:10px;color:rgba(255,255,255,0.3);">this month</span></div>
+            <canvas id="bi-sparkline-hours" height="32" style="width:100%;margin-top:8px;"></canvas>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="bi-card"><div style="font-size:12px;font-weight:600;color:#f0f0f5;margin-bottom:2px;">Revenue Trend</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px;">Last 7 months</div><canvas id="bi-chart-revenue" height="110"></canvas></div>
+          <div class="bi-card"><div style="font-size:12px;font-weight:600;color:#f0f0f5;margin-bottom:2px;">Workflow Activity</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px;">Executions per day</div><canvas id="bi-chart-workflow" height="110"></canvas></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="bi-card">
+            <div style="font-size:12px;font-weight:600;color:#f0f0f5;margin-bottom:14px;">Automation Metrics</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:rgba(255,255,255,0.45);">Active Workflows</span><span style="font-size:13px;font-weight:700;color:#22c55e;">12</span></div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:rgba(255,255,255,0.45);">Successful Executions</span><span style="font-size:13px;font-weight:700;color:#22c55e;">1,847</span></div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:rgba(255,255,255,0.45);">Failed Tasks</span><span style="font-size:13px;font-weight:700;color:#ff375f;">23</span></div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:rgba(255,255,255,0.45);">Uptime</span><span style="font-size:13px;font-weight:700;color:#22c55e;">99.2%</span></div>
+              <div style="margin-top:2px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;"><span>Efficiency</span><span>98.8%</span></div><div style="height:4px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;"><div style="height:4px;width:98.8%;background:linear-gradient(90deg,#22c55e,#0a84ff);border-radius:4px;"></div></div></div>
+            </div>
+          </div>
+          <div class="bi-card">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;"><div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;animation:pulse-text 2s infinite;"></div><span style="font-size:12px;font-weight:600;color:#f0f0f5;">AI Operational Insights</span></div>
+            <div id="bi-insights-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVENUE PANEL -->
+      <div id="bipanel-revenue" style="flex:1;overflow-y:auto;padding:18px;display:none;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Monthly Revenue</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">$48,200</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">+18.4%</span><span style="font-size:10px;color:rgba(255,255,255,0.25);">vs last month</span></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">API Revenue</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">$18,500</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#60a5fa;background:rgba(96,165,250,0.1);padding:2px 6px;border-radius:4px;">38%</span><span style="font-size:10px;color:rgba(255,255,255,0.25);">of total</span></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Op. Expenses</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">$12,840</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px;">+12%</span><span style="font-size:10px;color:rgba(255,255,255,0.25);">infra costs</span></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Net Profit</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">$35,360</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">73.4%</span><span style="font-size:10px;color:rgba(255,255,255,0.25);">margin</span></div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;flex:1;min-height:0;">
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;"><div><div style="font-size:13px;font-weight:600;color:#e8e8f0;">Revenue vs Expenses</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">Monthly — last 7 months</div></div><div style="display:flex;gap:12px;font-size:10px;color:rgba(255,255,255,0.35);align-items:center;"><span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:2px;background:#22c55e;display:inline-block;border-radius:2px;"></span>Revenue</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:2px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>Expenses</span></div></div>
+            <canvas id="bi-chart-rev-detail" style="flex:1;min-height:160px;"></canvas>
+          </div>
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="font-size:13px;font-weight:600;color:#e8e8f0;margin-bottom:4px;">Revenue Breakdown</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:16px;">By source this month</div>
+            <div style="display:flex;flex-direction:column;gap:11px;flex:1;">
+              <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;"><span style="color:rgba(255,255,255,0.45);">API Services</span><span style="color:#e8e8f0;font-weight:600;">$18,500</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:38%;background:#22c55e;border-radius:3px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;"><span style="color:rgba(255,255,255,0.45);">SaaS Subscriptions</span><span style="color:#e8e8f0;font-weight:600;">$16,200</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:34%;background:#60a5fa;border-radius:3px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;"><span style="color:rgba(255,255,255,0.45);">Automation Tools</span><span style="color:#e8e8f0;font-weight:600;">$9,100</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:19%;background:#a78bfa;border-radius:3px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;"><span style="color:rgba(255,255,255,0.45);">Consulting</span><span style="color:#e8e8f0;font-weight:600;">$4,400</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:9%;background:#f59e0b;border-radius:3px;"></div></div></div>
+              <div style="margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;color:rgba(255,255,255,0.3);">Q4 Projection</span><span style="font-size:16px;font-weight:700;color:#e8e8f0;">$61,000</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Monthly Targets</div><div style="display:flex;flex-direction:column;gap:9px;"><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Revenue Goal</span><span style="color:#e8e8f0;">96%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:96%;background:#22c55e;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Cost Budget</span><span style="color:#e8e8f0;">92%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:92%;background:#f59e0b;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Profit Margin</span><span style="color:#e8e8f0;">73%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:73%;background:#60a5fa;border-radius:3px;"></div></div></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Top Expense Categories</div><div style="display:flex;flex-direction:column;gap:7px;"><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.45);">Infrastructure</span><span style="color:#e8e8f0;font-weight:500;">$5,200</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.45);">API Costs</span><span style="color:#e8e8f0;font-weight:500;">$3,840</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.45);">Team & Ops</span><span style="color:#e8e8f0;font-weight:500;">$2,400</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:rgba(255,255,255,0.45);">Marketing</span><span style="color:#e8e8f0;font-weight:500;">$1,400</span></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">AI Cost Insights</div><div style="display:flex;flex-direction:column;gap:8px;"><div style="padding:8px 10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">API costs down <strong style="color:#e8e8f0;">8%</strong> after caching layer added.</div><div style="padding:8px 10px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">Unused compute — <strong style="color:#e8e8f0;">$320</strong> potential savings.</div></div></div>
+        </div>
+      </div>
+
+      <!-- AUTOMATION PANEL -->
+      <div id="bipanel-automation" style="flex:1;overflow-y:auto;padding:18px;display:none;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Active Workflows</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">12</div><div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:5px;">3 added this month</div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Total Executions</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">1,847</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">+24%</span></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Success Rate</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">98.8%</div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin-top:8px;"><div style="height:3px;width:98.8%;background:#22c55e;border-radius:3px;"></div></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Uptime</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">99.2%</div><div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:5px;">23 failed tasks</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;flex:1;min-height:0;">
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;"><div><div style="font-size:13px;font-weight:600;color:#e8e8f0;">Execution Activity</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">Daily runs — last 14 days</div></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Avg <strong style="color:#e8e8f0;">168/day</strong></div></div>
+            <canvas id="bi-chart-auto-detail" style="flex:1;min-height:160px;"></canvas>
+          </div>
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="font-size:13px;font-weight:600;color:#e8e8f0;margin-bottom:4px;">Workflow Status</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;">All active workflows</div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div><div style="font-size:11px;color:#e8e8f0;font-weight:500;">Email Automation</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;">342 runs</div></div><span style="font-size:10px;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:4px;">Active</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div><div style="font-size:11px;color:#e8e8f0;font-weight:500;">Data Sync</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;">289 runs</div></div><span style="font-size:10px;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:4px;">Active</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div><div style="font-size:11px;color:#e8e8f0;font-weight:500;">Report Generator</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;">48 runs</div></div><span style="font-size:10px;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 7px;border-radius:4px;">Active</span></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div><div style="font-size:11px;color:#e8e8f0;font-weight:500;">API Monitor</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;">12 runs</div></div><span style="font-size:10px;color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 7px;border-radius:4px;">Warning</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Execution by Type</div><div style="display:flex;flex-direction:column;gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Scheduled</span><span style="color:#e8e8f0;">68%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:68%;background:#22c55e;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Webhook</span><span style="color:#e8e8f0;">22%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:22%;background:#60a5fa;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Manual</span><span style="color:#e8e8f0;">10%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:10%;background:#a78bfa;border-radius:3px;"></div></div></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Avg Response Time</div><div style="font-size:28px;font-weight:700;color:#e8e8f0;letter-spacing:-.5px;margin-bottom:4px;">1.2s</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px;">per execution</div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:rgba(255,255,255,0.4);">P50</span><span style="color:#e8e8f0;">0.8s</span></div><div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:rgba(255,255,255,0.4);">P95</span><span style="color:#e8e8f0;">2.4s</span></div><div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:rgba(255,255,255,0.4);">P99</span><span style="color:#e8e8f0;">4.1s</span></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Automation Insights</div><div style="display:flex;flex-direction:column;gap:8px;"><div style="padding:8px 10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">Email automation has <strong style="color:#e8e8f0;">highest efficiency</strong> at 97.4%.</div><div style="padding:8px 10px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">API Monitor showing <strong style="color:#e8e8f0;">elevated latency</strong> — review config.</div></div></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTIVITY PANEL -->
+      <div id="bipanel-productivity" style="flex:1;overflow-y:auto;padding:18px;display:none;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.06) transparent;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Hours Saved</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">36 hrs</div><div style="display:flex;align-items:center;gap:5px;margin-top:5px;"><span style="font-size:10px;font-weight:600;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;">+22%</span><span style="font-size:10px;color:rgba(255,255,255,0.25);">vs last month</span></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Tasks Automated</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">284</div><div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:5px;">of 301 total tasks</div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Efficiency Score</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">94.7%</div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin-top:8px;"><div style="height:3px;width:94.7%;background:#22c55e;border-radius:3px;"></div></div></div>
+          <div class="bi-card"><div style="font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Cost Saved</div><div style="font-size:22px;font-weight:700;color:#e8e8f0;letter-spacing:-.3px;">$4,320</div><div style="font-size:10px;color:rgba(255,255,255,0.25);margin-top:5px;">via automation</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;flex:1;min-height:0;">
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;"><div><div style="font-size:13px;font-weight:600;color:#e8e8f0;">Hours Saved per Week</div><div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;">Last 8 weeks</div></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Total <strong style="color:#e8e8f0;">213 hrs</strong> this quarter</div></div>
+            <canvas id="bi-chart-prod-detail" style="flex:1;min-height:160px;"></canvas>
+          </div>
+          <div class="bi-card" style="display:flex;flex-direction:column;">
+            <div style="font-size:13px;font-weight:600;color:#e8e8f0;margin-bottom:4px;">Top Automated Tasks</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:14px;">By time saved</div>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              <div style="padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#e8e8f0;font-weight:500;">Report Generation</span><span style="font-size:10px;color:#22c55e;">12 hrs</span></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Weekly automated reports</div></div>
+              <div style="padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#e8e8f0;font-weight:500;">Email Campaigns</span><span style="font-size:10px;color:#22c55e;">9 hrs</span></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Automated outreach</div></div>
+              <div style="padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#e8e8f0;font-weight:500;">Data Sync</span><span style="font-size:10px;color:#22c55e;">8 hrs</span></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Cross-platform sync</div></div>
+              <div style="padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;color:#e8e8f0;font-weight:500;">Invoice Processing</span><span style="font-size:10px;color:#22c55e;">7 hrs</span></div><div style="font-size:10px;color:rgba(255,255,255,0.3);">Auto-generated invoices</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Automation Coverage</div><div style="display:flex;flex-direction:column;gap:8px;"><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Reporting</span><span style="color:#e8e8f0;">100%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:100%;background:#22c55e;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Email</span><span style="color:#e8e8f0;">87%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:87%;background:#60a5fa;border-radius:3px;"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:rgba(255,255,255,0.4);">Data Entry</span><span style="color:#e8e8f0;">64%</span></div><div style="height:3px;background:rgba(255,255,255,0.06);border-radius:3px;"><div style="height:3px;width:64%;background:#a78bfa;border-radius:3px;"></div></div></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Team Productivity</div><div style="display:flex;flex-direction:column;gap:7px;"><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.4);">Focus Time</span><span style="color:#e8e8f0;font-weight:500;">+4.2 hrs/week</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.4);">Manual Tasks</span><span style="color:#e8e8f0;font-weight:500;">↓ 43%</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span style="color:rgba(255,255,255,0.4);">Error Rate</span><span style="color:#e8e8f0;font-weight:500;">↓ 78%</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;"><span style="color:rgba(255,255,255,0.4);">Delivery Speed</span><span style="color:#e8e8f0;font-weight:500;">↑ 31%</span></div></div></div>
+          <div class="bi-card"><div style="font-size:11px;font-weight:600;color:#e8e8f0;margin-bottom:12px;">Productivity Insights</div><div style="display:flex;flex-direction:column;gap:8px;"><div style="padding:8px 10px;background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">Automation saved <strong style="color:#e8e8f0;">36 working hours</strong> this month.</div><div style="padding:8px 10px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.1);border-radius:8px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.5;">Data entry automation has <strong style="color:#e8e8f0;">64% coverage</strong> — room to grow.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+<script>
+
+// ── API KEY ───────────────────────────────────────────────────────────────────
+function toggleApiKeyModal(){
+  const m=document.getElementById('api-key-modal');
+  if(m.style.display==='none'){
+    m.style.display='block';
+    document.getElementById('api-key-input').value=GROQ_API_KEY;
+    document.getElementById('gemini-key-input').value=GEMINI_KEY;
+    document.getElementById('api-key-input').focus();
+    updateKeyBtnColor();
+  }else{m.style.display='none';}
+}
+function saveApiKey(){
+  const groqVal=document.getElementById('api-key-input').value.trim();
+  const geminiVal=document.getElementById('gemini-key-input').value.trim();
+  if(!groqVal&&!geminiVal){document.getElementById('api-key-status').textContent='Enter at least one key.';document.getElementById('api-key-status').style.color='#ff3b30';return;}
+  if(groqVal){GROQ_API_KEY=groqVal;localStorage.setItem('groq_api_key',groqVal);}
+  if(geminiVal){GEMINI_KEY=geminiVal;localStorage.setItem('gemini_api_key',geminiVal);}
+  else{GEMINI_KEY='';localStorage.removeItem('gemini_api_key');}
+  document.getElementById('api-key-status').textContent='✓ Keys saved!';
+  document.getElementById('api-key-status').style.color='#22c55e';
+  updateKeyBtnColor();
+  setTimeout(()=>{document.getElementById('api-key-modal').style.display='none';checkServer();},800);
+}
+function clearApiKey(){
+  GROQ_API_KEY='';GEMINI_KEY='';
+  localStorage.removeItem('groq_api_key');localStorage.removeItem('gemini_api_key');
+  document.getElementById('api-key-input').value='';
+  document.getElementById('gemini-key-input').value='';
+  document.getElementById('api-key-status').textContent='Keys cleared.';
+  document.getElementById('api-key-status').style.color='#8e8ea0';
+  updateKeyBtnColor();
+  setStatus(false,'Enter your Groq API key — click the key icon');
+}
+function updateKeyBtnColor(){
+  const btn=document.getElementById('key-btn');
+  if(btn)btn.style.color=GROQ_API_KEY?'#22c55e':'#ff3b30';
+}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('api-key-modal');
+  if(m&&m.style.display==='block'&&!m.contains(e.target)&&!e.target.closest('#key-btn'))
+    m.style.display='none';
+});
+// Init key button color on load
+setTimeout(updateKeyBtnColor, 1400);
+</script>
+</body>
+</html>
